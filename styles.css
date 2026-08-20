@@ -1,66 +1,56 @@
-
-*{box-sizing:border-box}
-html,body{margin:0;padding:0;background:#f7f7f4;color:#111;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
-button{font:inherit}
+:root{--paper:#f7f7f4;--ink:#111;--muted:#8c8c8c;--yellow:#c58b00}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;background:var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
+body{overflow:hidden}
+button,input,textarea{font:inherit}
 .hidden{display:none!important}
-.screen{position:fixed;inset:0;z-index:5000;background:#f2f2f7}
-.app{min-height:100vh;background:#f7f7f4;padding-bottom:64px}
-.topbar{height:104px;padding:56px 26px 0;display:flex;justify-content:space-between;align-items:flex-start;border-bottom:1px solid #ecece8}
-.back,.toolbar{border:0;background:transparent;color:#b58c16;font-size:25px;padding:0}
-.toolbar{letter-spacing:6px}
-.note{padding:14px 42px 85px}
-.date{text-align:center;color:#929292;font-size:16px;margin:0 0 18px}
-#noteTitle{font-size:27px;line-height:1.1;margin:0 0 18px;font-weight:600;letter-spacing:-.4px}
-.itemList{margin:0;padding-left:48px;font-family:"Avenir Next Condensed","Helvetica Neue",sans-serif;font-size:24px;line-height:1.34}
-.itemList li{padding-left:5px}
-.bottomBar{position:fixed;left:0;right:0;bottom:0;height:62px;background:rgba(250,250,248,.97);border-top:1px solid #dededb;display:flex;justify-content:space-around;align-items:center;color:#bd8d13;font-size:25px;z-index:100}
-.hotspot{position:fixed;z-index:200;opacity:0;border:0;background:transparent}
-.voiceHotspot{right:0;top:0;width:120px;height:120px}
-.keypadHotspot{left:0;bottom:0;width:145px;height:130px}
-.keypad{position:fixed;right:7px;bottom:42px;width:216px;padding:5px;z-index:400;background:rgba(247,247,245,.18);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
-.keyReadout{height:0;overflow:hidden;opacity:0}
+.screen{position:fixed;inset:0;background:var(--paper)}
+/* NOTE */
+#noteScreen{overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(52px + env(safe-area-inset-bottom))}
+.topbar{height:calc(48px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);display:flex;align-items:center;justify-content:space-between;padding-left:15px;padding-right:15px;position:sticky;top:0;background:rgba(247,247,244,.96);backdrop-filter:blur(10px);z-index:4;border-bottom:1px solid rgba(0,0,0,.035)}
+.notesBack{border:0;background:none;color:var(--yellow);font-size:30px;line-height:1;padding:0;display:flex;align-items:center;gap:3px}
+.notesBack span{font-size:17px;font-weight:400;margin-top:2px}
+.dots{font-size:20px;letter-spacing:2px;color:var(--yellow);padding-bottom:8px}
+.note{padding:2px 24px 40px}
+.dateLine{text-align:center;color:var(--muted);font-size:12px;margin:2px 0 11px}
+#noteTitle{font-size:19px;line-height:1.15;margin:0 0 9px;font-weight:600}
+#noteList{margin:0;padding-left:34px;font-family:"Avenir Next Condensed","Helvetica Neue",sans-serif;font-size:18px;line-height:1.55}
+#noteList li{padding-left:3px}
+.noteFooter{position:fixed;left:0;right:0;bottom:0;height:calc(48px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);display:flex;align-items:center;justify-content:space-around;background:rgba(247,247,244,.97);border-top:1px solid rgba(0,0,0,.08);color:var(--yellow);font-size:23px;z-index:4}
+.hotspot{position:fixed;border:0;background:transparent;padding:0;z-index:20;opacity:0}
+.voiceHotspot{top:calc(env(safe-area-inset-top) + 48px);right:0;width:76px;height:76px}
+.keypadHotspot{bottom:calc(env(safe-area-inset-bottom) + 48px);left:0;width:84px;height:84px}
+.keypad{position:fixed;right:6px;bottom:calc(48px + env(safe-area-inset-bottom));width:214px;z-index:100;background:rgba(247,247,244,.18);padding:5px;border-radius:12px;backdrop-filter:blur(1.5px);-webkit-backdrop-filter:blur(1.5px)}
 .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.keys button{height:62px;border:0;border-radius:10px;background:rgba(232,232,229,.34);color:rgba(60,60,60,.20);font-family:"Avenir Next Condensed","Helvetica Neue",sans-serif;font-size:27px}
-.keys button:active{background:rgba(220,220,217,.46);color:rgba(40,40,40,.28)}
-
-.libHead{padding:76px 22px 0}
-.folders{color:#b18b12;font-size:28px}.folders span{font-size:26px}
-.more{position:absolute;right:24px;top:76px;width:48px;height:48px;border:3px solid #b18b12;border-radius:50%;color:#b18b12;text-align:center;line-height:33px;font-size:28px}
-.libHead h1{font-size:46px;letter-spacing:-2px;margin:44px 0 28px}
-.search{height:58px;border-radius:14px;background:#dddde3;color:#6e6e75;font-size:29px;line-height:58px;padding:0 17px}
-.libraryRows{padding:28px 22px 90px;height:calc(100vh - 300px);overflow:auto}
-.sectionTitle{font-size:26px;font-weight:700;margin:0 18px 12px}
-.card{background:#fff;border-radius:13px;overflow:hidden}
-.row{padding:16px 20px;border-bottom:1px solid #ddd}.row:last-child{border-bottom:0}
-.rowTitle{font-size:25px;font-weight:650}.rowMeta{font-size:18px;color:#737378;margin-top:5px}
-.libFooter{position:fixed;left:0;right:0;bottom:0;height:68px;border-top:1px solid #d0d0d4;background:#fafafa;display:flex;justify-content:center;align-items:center}
-.libFooter button{position:absolute;right:28px;border:0;background:transparent;color:#b18b12;font-size:34px}
-
-.managerHead{height:102px;padding:56px 16px 0;background:#fff;border-bottom:1px solid #d8d8dc;display:flex;justify-content:space-between;align-items:flex-start}
-.managerHead button{border:0;background:transparent;color:#8d6c0a;font-size:17px}
-.managerBody{padding:18px;height:calc(100vh - 102px);overflow:auto}
-.managerBody label{display:block;color:#666;font-size:13px;margin-bottom:14px}
-.managerBody input[type=text],.managerBody textarea{display:block;width:100%;margin-top:5px;padding:10px;border:1px solid #c8c8cc;border-radius:8px;background:#fff;font:17px -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
-.managerBody textarea{height:48vh;font-family:"Avenir Next Condensed","Helvetica Neue",sans-serif}
-.managerActions{display:flex;gap:8px;margin:12px 0}
-.managerActions button,.importButton{flex:1;border:1px solid #bbb;border-radius:8px;background:#fff;color:#111;padding:11px;text-align:center}
-.importButton input{display:none}.managerBody p{color:#777;font-size:12px}
-
-/* V8 scrolling fixes */
-#libraryScreen { overflow:hidden; }
-.libraryRows {
-  position:absolute;
-  left:0; right:0;
-  top:300px; bottom:68px;
-  height:auto !important;
-  overflow-y:auto !important;
-  -webkit-overflow-scrolling:touch;
-  overscroll-behavior:contain;
-  padding-bottom:30px;
-}
-.libFooter { z-index:5100; }
-.managerBody {
-  -webkit-overflow-scrolling:touch;
-  padding-bottom:80px;
-}
-#managerDone { font-weight:600; }
+.keys button{height:64px;border:0;border-radius:10px;background:rgba(224,224,221,.32);color:rgba(55,55,55,.19);font-family:"Avenir Next Condensed","Helvetica Neue",sans-serif;font-size:29px;font-weight:400}
+.keys button:active{background:rgba(210,210,207,.43);color:rgba(35,35,35,.28)}
+/* LIBRARY */
+#libraryScreen{background:#f2f2f7;overflow:hidden}
+.libraryHead{position:absolute;left:0;right:0;top:0;height:245px;padding:calc(50px + env(safe-area-inset-top)) 20px 0}
+.folders{color:#b18b12;font-size:26px}.folders span{font-size:24px;vertical-align:2px}
+.more{position:absolute;right:22px;top:calc(50px + env(safe-area-inset-top));width:44px;height:44px;border:3px solid #b18b12;border-radius:50%;color:#b18b12;text-align:center;line-height:32px;font-size:25px}
+.libraryHead h2{font-size:44px;line-height:1;margin:34px 0 22px;letter-spacing:-1.8px}
+.search{height:48px;border-radius:12px;background:#dddde3;color:#696970;font-size:26px;line-height:48px;padding:0 14px}
+.libraryScroller{position:absolute;top:245px;bottom:calc(58px + env(safe-area-inset-bottom));left:0;right:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:17px 20px 30px}
+.sectionTitle{font-size:25px;font-weight:700;margin:0 18px 10px}
+.card{background:#fff;border-radius:12px;overflow:hidden}
+.libraryRow{padding:14px 18px 13px;border-bottom:1px solid #d8d8dc;touch-action:manipulation}
+.libraryRow:last-child{border-bottom:0}
+.rowTitle{font-size:24px;font-weight:650;line-height:1.15}
+.rowMeta{color:#737378;font-size:18px;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.libraryFooter{position:absolute;left:0;right:0;bottom:0;height:calc(58px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:rgba(250,250,250,.98);border-top:1px solid #d2d2d5;display:flex;align-items:center;justify-content:center;font-size:16px}
+.libraryFooter button{position:absolute;right:22px;border:0;background:none;color:#b18b12;font-size:32px}
+/* EDITOR */
+#editorScreen{background:#f2f2f7;overflow:hidden}
+.editorHead{height:calc(58px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 14px 0;display:flex;align-items:center;justify-content:space-between;background:#fff;border-bottom:1px solid #d2d2d5}
+.editorHead button{border:0;background:none;color:#8a6907;font-size:17px}
+.editorHead #editorSave{font-weight:650}
+.editorBody{position:absolute;top:calc(58px + env(safe-area-inset-top));bottom:0;left:0;right:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:18px 18px 80px}
+.editorBody label{display:block;font-size:13px;color:#666;margin-bottom:14px}
+.editorBody input[type=text],.editorBody textarea{display:block;width:100%;margin-top:5px;border:1px solid #c8c8cc;border-radius:8px;background:#fff;color:#111;padding:10px;font:17px -apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
+.editorBody textarea{height:48vh;resize:vertical;font-family:"Avenir Next Condensed","Helvetica Neue",sans-serif}
+.deleteButton{width:100%;border:1px solid #d4b2b2;border-radius:8px;background:#fff;color:#a31e1e;padding:11px;margin:4px 0 12px}
+.backupRow{display:flex;gap:8px}
+.backupRow button,.backupRow label{flex:1;border:1px solid #bbb;border-radius:8px;background:#fff;color:#111;padding:11px 8px;text-align:center;font-size:15px;margin:0}
+.backupRow label input{display:none}
+.storageNote{font-size:12px;color:#777}

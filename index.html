@@ -6,82 +6,74 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="theme-color" content="#f7f7f4">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <title>Notes</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
-<link rel="stylesheet" href="styles.css?v=8a">
+<link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
 
-<section id="libraryScreen" class="screen hidden">
-  <div class="libHead">
-    <div class="folders">‹ <span>Folders</span></div>
-    <div class="more">•••</div>
-    <h1>All iCloud</h1>
-    <div class="search">⌕ <span>Search</span></div>
-  </div>
-  <div id="libraryRows" class="libraryRows">
-    <div class="sectionTitle">Previous 7 Days</div>
-    <div class="card">
-      <div class="row" data-id="movies">
-        <div class="rowTitle">100 Movies</div>
-        <div class="rowMeta">Today&nbsp;&nbsp;100 items</div>
-      </div>
+<section id="noteScreen" class="screen">
+  <header class="topbar">
+    <button id="notesBack" class="notesBack" type="button">‹ <span>Notes</span></button>
+    <div class="dots">•••</div>
+  </header>
+  <main class="note">
+    <div id="dateLine" class="dateLine"></div>
+    <h1 id="noteTitle">100 Movies</h1>
+    <ol id="noteList"></ol>
+  </main>
+  <footer class="noteFooter"><span>☷</span><span>⌁</span><span>✎</span></footer>
+
+  <button id="voiceHotspot" class="hotspot voiceHotspot" aria-label="Voice"></button>
+  <button id="keypadHotspot" class="hotspot keypadHotspot" aria-label="Manual"></button>
+
+  <div id="keypad" class="keypad hidden">
+    <div class="keys">
+      <button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button>
+      <button data-digit="4">4</button><button data-digit="5">5</button><button data-digit="6">6</button>
+      <button data-digit="7">7</button><button data-digit="8">8</button><button data-digit="9">9</button>
+      <button id="keyCancel">×</button><button data-digit="0">0</button><button id="keyBack">⌫</button>
     </div>
   </div>
-  <div class="libFooter"><span id="noteCount">1 Note</span><button id="addList" type="button">✎</button></div>
 </section>
 
-<section id="managerScreen" class="screen hidden">
-  <div class="managerHead">
-    <button id="managerBack" type="button">‹ Library</button>
-    <strong>Edit List</strong>
-    <button id="managerDone" type="button">Save</button>
+<section id="libraryScreen" class="screen hidden">
+  <div class="libraryHead">
+    <div class="folders">‹ <span>Folders</span></div>
+    <div class="more">•••</div>
+    <h2>All iCloud</h2>
+    <div class="search">⌕ <span>Search</span></div>
   </div>
-  <div class="managerBody">
+  <div id="libraryScroller" class="libraryScroller"></div>
+  <footer class="libraryFooter">
+    <span id="noteCount">1 Note</span>
+    <button id="addList" type="button" aria-label="New note">✎</button>
+  </footer>
+</section>
+
+<section id="editorScreen" class="screen hidden">
+  <header class="editorHead">
+    <button id="editorCancel" type="button">Cancel</button>
+    <strong id="editorHeading">Edit List</strong>
+    <button id="editorSave" type="button">Save</button>
+  </header>
+  <main class="editorBody">
     <label>Title<input id="editTitle" type="text" autocomplete="off"></label>
     <label>Force item<input id="editForce" type="text" autocomplete="off"></label>
     <label>Items — one per line<textarea id="editItems" spellcheck="false"></textarea></label>
-    <div class="managerActions">
-      <button id="deleteList" type="button">Delete</button>
-      <button id="newList" type="button">New List</button>
+    <button id="deleteList" class="deleteButton" type="button">Delete List</button>
+    <div class="backupRow">
+      <button id="exportLibrary" type="button">Export Library</button>
+      <label>Import Library<input id="importLibrary" type="file" accept=".json,application/json"></label>
     </div>
-    <div class="managerActions">
-      <button id="exportLibrary" type="button">Export</button>
-      <label class="importButton">Import<input id="importLibrary" type="file" accept=".json,application/json"></label>
-    </div>
-    <p>Stored on this iPhone. Export is the backup.</p>
-  </div>
-</section>
-
-<section id="noteScreen">
-  <main class="app">
-    <header class="topbar">
-      <button id="backToLibrary" class="back" type="button">‹ <span>Notes</span></button>
-      <div class="toolbar">•••</div>
-    </header>
-    <section class="note">
-      <div class="date" id="dateLine"></div>
-      <h1 id="noteTitle">100 Movies</h1>
-      <ol id="itemList" class="itemList"></ol>
-    </section>
-    <footer class="bottomBar"><span>☷</span><span>⌁</span><span>✎</span></footer>
-
-    <button id="voiceHotspot" class="hotspot voiceHotspot" aria-label="Voice"></button>
-    <button id="keypadHotspot" class="hotspot keypadHotspot" aria-label="Manual"></button>
-
-    <div id="keypad" class="keypad hidden">
-      <div id="keyReadout" class="keyReadout">— —</div>
-      <div class="keys">
-        <button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button>
-        <button data-digit="4">4</button><button data-digit="5">5</button><button data-digit="6">6</button>
-        <button data-digit="7">7</button><button data-digit="8">8</button><button data-digit="9">9</button>
-        <button id="keyCancel">×</button><button data-digit="0">0</button><button id="keyBack">⌫</button>
-      </div>
-    </div>
+    <p class="storageNote">Stored on this iPhone. Export is the backup.</p>
   </main>
 </section>
 
-<script src="app.js?v=8a"></script>
+<div id="selftestResult" class="hidden"></div>
+
+<script src="app.js?v=9"></script>
 </body>
 </html>
