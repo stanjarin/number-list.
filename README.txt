@@ -60,3 +60,5 @@ V6
 - Existing V5 force controls are retained.
 
 V6a: fake Notes back button now opens library with an ordinary tap.
+
+V6b: Notes back control is now wired directly in HTML; no event-handler dependency.
