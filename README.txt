@@ -1,8 +1,13 @@
-Number List V10e
+Number List V10f
 
-Keypad input rebuilt again:
-- When keypad appears, a dedicated transparent full-screen capture sheet is placed above the entire app.
-- The visible keypad is display-only.
-- All taps are caught by that top sheet and mapped by coordinates to keypad cells.
-- Nothing in Safari, the note, footer, hotspots, or keypad DOM buttons can steal the tap.
-- Faint diagnostic readout retained.
+Rollback build.
+The entire experimental keypad touch/capture work has been discarded.
+Input is back to the last proven V5 model:
+- ordinary visible keypad buttons
+- ordinary click handlers
+- no transparent full-screen overlay
+- no diagnostic readout
+- no document-level coordinate capture
+
+V10 library/short-list behaviour is retained.
+The pencil-area long-press still opens the keypad.
