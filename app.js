@@ -186,11 +186,21 @@ function forcedList(item,n){
   const items=item.items.slice();
   const len=items.length;
   if(n<1 || n>len) return null;
-  const force=item.force;
-  const forceIndex=items.indexOf(force);
-  if(forceIndex<0) return null;
-  items.splice(forceIndex,1);
-  items.splice(n-1,0,force);
+
+  const force=String(item.force||'').trim();
+  if(!force) return null;
+
+  const forceIndex=items.findIndex(x=>x===force);
+
+  if(forceIndex>=0){
+    // INTERNAL FORCE: move existing item to N; preserve every list member.
+    items.splice(forceIndex,1);
+    items.splice(n-1,0,force);
+    return items;
+  }
+
+  // EXTERNAL FORCE: replace the item at N; preserve list length.
+  items[n-1]=force;
   return items;
 }
 function validNumber(n){return Number.isInteger(n)&&n>=1&&n<=99}
@@ -280,7 +290,11 @@ if(validNumber(supplied)){
 window.NumberListApp={
   openLibrary,openNote,openEditor,saveEditor,commitForce,
   getLibrary:()=>JSON.parse(JSON.stringify(library)),
-  active:()=>JSON.parse(JSON.stringify(active()))
+  active:()=>JSON.parse(JSON.stringify(active())),
+  forceMode:()=>{
+    const item=currentItem||active();
+    return item.items.includes(item.force)?'internal':'external';
+  }
 };
 
 // Automated browser self-test. Never entered during normal use.
