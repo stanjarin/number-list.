@@ -45,3 +45,22 @@ button{font:inherit}
 .managerActions{display:flex;gap:8px;margin:12px 0}
 .managerActions button,.importButton{flex:1;border:1px solid #bbb;border-radius:8px;background:#fff;color:#111;padding:11px;text-align:center}
 .importButton input{display:none}.managerBody p{color:#777;font-size:12px}
+
+/* V8 scrolling fixes */
+#libraryScreen { overflow:hidden; }
+.libraryRows {
+  position:absolute;
+  left:0; right:0;
+  top:300px; bottom:68px;
+  height:auto !important;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  padding-bottom:30px;
+}
+.libFooter { z-index:5100; }
+.managerBody {
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:80px;
+}
+#managerDone { font-weight:600; }

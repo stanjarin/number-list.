@@ -1,24 +1,8 @@
-Number List V7
+Number List V8
 
-Rebuilt as one integrated app rather than layering a library onto V5.
-
-Normal:
-- Launches current note.
-- Tap “Notes” to open fake All iCloud library.
-- Tap a list to open it.
-- Hold a list row ~0.85 sec to edit it.
-- Bottom-right pencil in All iCloud adds a new list.
-
-Manager:
-- Title
-- Force item
-- One item per line
-- Save / Delete / New list
-- Export / Import JSON backup
-
-Force:
-- Hold bottom-left, tap two digits.
-- Hold top-right calls Number List Voice Shortcut.
-- ?n=NN URL input remains supported.
-
-Heading reduced to near body size so it looks typed, not purchased.
+Fixes:
+- Top-right Save actually saves the edited/new list.
+- New List no longer creates a blank "New Note" merely by opening the editor.
+- Abandoning a new list leaves no ghost entry.
+- All iCloud scrolling rebuilt as a fixed scroll region above the footer.
+- Existing local library data is preserved.

@@ -112,32 +112,45 @@ function openManager(id){
   show(managerScreen);
 }
 function createNew(){
-  var id='list-'+Date.now();
-  library.push({id:id,title:'New Note',force:'',items:[],updated:Date.now()});
-  saveLibrary();
-  openManager(id);
+  editingId='__new__';
+  document.getElementById('editTitle').value='';
+  document.getElementById('editForce').value='';
+  document.getElementById('editItems').value='';
+  show(managerScreen);
 }
 
 document.getElementById('backToLibrary').addEventListener('click',openLibrary);
 document.getElementById('addList').addEventListener('click',createNew);
 document.getElementById('newList').addEventListener('click',createNew);
 document.getElementById('managerBack').addEventListener('click',openLibrary);
-document.getElementById('managerDone').addEventListener('click',openLibrary);
 
-document.getElementById('saveList').addEventListener('click',function(){
+
+function saveEditor(){
+  var titleValue=document.getElementById('editTitle').value.trim()||'Untitled';
+  var forceValue=document.getElementById('editForce').value.trim();
+  var lines=document.getElementById('editItems').value.split(/?
+/);
+  var itemsValue=[];
+  for(var j=0;j<lines.length;j++){var x=lines[j].trim();if(x)itemsValue.push(x);}
   var item=null;
-  for(var i=0;i<library.length;i++)if(library[i].id===editingId)item=library[i];
-  if(!item)return;
-  item.title=document.getElementById('editTitle').value.trim()||'Untitled';
-  item.force=document.getElementById('editForce').value.trim();
-  var lines=document.getElementById('editItems').value.split(/\r?\n/);
-  item.items=[];
-  for(var j=0;j<lines.length;j++){var x=lines[j].trim();if(x)item.items.push(x);}
-  item.updated=Date.now();
+  if(editingId==='__new__'){
+    item={id:'list-'+Date.now(),title:titleValue,force:forceValue,items:itemsValue,updated:Date.now()};
+    library.push(item);
+    editingId=item.id;
+  }else{
+    for(var i=0;i<library.length;i++)if(library[i].id===editingId)item=library[i];
+    if(!item)return;
+    item.title=titleValue;
+    item.force=forceValue;
+    item.items=itemsValue;
+    item.updated=Date.now();
+  }
   saveLibrary();
   openLibrary();
-});
+}
+document.getElementById('managerDone').addEventListener('click',saveEditor);
 document.getElementById('deleteList').addEventListener('click',function(){
+  if(editingId==='__new__'){openLibrary();return;}
   if(library.length<=1)return;
   var next=[];
   for(var i=0;i<library.length;i++)if(library[i].id!==editingId)next.push(library[i]);
