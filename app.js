@@ -201,3 +201,192 @@
   els.date.textContent = now.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}) + ' at ' + now.toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'});
 
 })();
+
+
+
+/* V6 editable library layer */
+(() => {
+  const STORE = 'numberListLibraryV6';
+  const ACTIVE = 'numberListActiveV6';
+
+  const fallbackMovies = [
+    "Citizen Kane","Casablanca","Singin’ in the Rain","The Apartment","Jaws",
+    "North by Northwest","The Conversation","Chinatown","The General","Local Hero",
+    "The Maltese Falcon","Some Like It Hot","The Red Shoes","All About Eve","The French Connection",
+    "The 400 Blows","Nashville","The Lady Vanishes","The Producers","Rear Window",
+    "The Godfather","The Godfather Part II","Vertigo","Psycho","Rashomon","Seven Samurai",
+    "The Rules of the Game","Tokyo Story","Bicycle Thieves","8½","La Dolce Vita","Persona",
+    "Wild Strawberries","The Seventh Seal","The Searchers","Rio Bravo","The Big Sleep",
+    "Double Indemnity","Sunset Boulevard","The Third Man","Touch of Evil","The Night of the Hunter",
+    "A Matter of Life and Death","Brief Encounter","Kind Hearts and Coronets","The Lavender Hill Mob",
+    "The Wages of Fear","Diabolique","Le Samouraï","Breathless","Jules and Jim","Cleo from 5 to 7",
+    "Playtime","Mon Oncle","The Discreet Charm of the Bourgeoisie","The Exterminating Angel",
+    "Aguirre, the Wrath of God","Fitzcarraldo","Stalker","Solaris","Andrei Rublev","Come and See",
+    "The Battle of Algiers","Z","Army of Shadows","The Conformist","The Leopard","Rocco and His Brothers",
+    "Once Upon a Time in the West","The Good, the Bad and the Ugly","Yojimbo","High and Low",
+    "Harakiri","Ugetsu","Sansho the Bailiff","Late Spring","An Autumn Afternoon","A Man Escaped",
+    "Pickpocket","Au Hasard Balthazar","The Passion of Joan of Arc","Ordet","Vampyr","M",
+    "Metropolis","City Lights","Modern Times","Sherlock Jr.","The Cameraman","The Gold Rush",
+    "His Girl Friday","Bringing Up Baby","The Philadelphia Story","To Be or Not to Be","The Shop Around the Corner",
+    "The Treasure of the Sierra Madre","Ace in the Hole","Paths of Glory","Barry Lyndon","2001: A Space Odyssey","Dr. Strangelove"
+  ];
+
+  function defaultLibrary() {
+    return [{
+      id:'movies',
+      title:'100 Movies',
+      force:'The Third Man',
+      items:fallbackMovies.slice(0,100),
+      updated:Date.now()
+    }];
+  }
+  function loadLibrary() {
+    try {
+      const x=JSON.parse(localStorage.getItem(STORE));
+      return Array.isArray(x)&&x.length ? x : defaultLibrary();
+    } catch(e) { return defaultLibrary(); }
+  }
+  function saveLibrary(lib) { localStorage.setItem(STORE, JSON.stringify(lib)); }
+  let library=loadLibrary();
+  saveLibrary(library);
+  let activeId=localStorage.getItem(ACTIVE) || library[0].id;
+  let editingId=null;
+
+  const menu=document.getElementById('libraryMenu');
+  const manager=document.getElementById('manager');
+  const note=document.getElementById('noteView');
+
+  function active() { return library.find(x=>x.id===activeId) || library[0]; }
+
+  function renderRows() {
+    const rows=document.getElementById('libraryRows');
+    rows.innerHTML='';
+    const heading=document.createElement('div');
+    heading.className='nl-section-title'; heading.textContent='My Notes';
+    rows.appendChild(heading);
+    const card=document.createElement('div'); card.className='nl-card';
+    library.forEach(item=>{
+      const row=document.createElement('div'); row.className='nl-row';
+      row.innerHTML=`<div class="nl-row-title"></div><div class="nl-row-meta"></div>`;
+      row.querySelector('.nl-row-title').textContent=item.title;
+      row.querySelector('.nl-row-meta').textContent=(item.items?.length||0)+' items';
+      row.addEventListener('click',()=>openNote(item.id));
+      let timer;
+      row.addEventListener('touchstart',()=>timer=setTimeout(()=>openManager(item.id),800),{passive:true});
+      row.addEventListener('touchend',()=>clearTimeout(timer),{passive:true});
+      card.appendChild(row);
+    });
+    rows.appendChild(card);
+    document.getElementById('noteCount').textContent=library.length+' Notes';
+  }
+
+  function show(el) {
+    [menu,manager,note].forEach(x=>x && x.classList.add('nl-hidden'));
+    el.classList.remove('nl-hidden');
+  }
+
+  function openMenu() { renderRows(); show(menu); }
+
+  function applyListToPage(item) {
+    // Replace heading with selected list title.
+    const headings=[...note.querySelectorAll('h1,h2')];
+    const titleEl=headings.find(x=>/100 Movies/i.test(x.textContent)) || headings[0];
+    if(titleEl) titleEl.textContent=item.title;
+
+    // Locate the list container used by V5 by finding numbered rows.
+    const candidates=[...note.querySelectorAll('ol,ul,#movieList,.movie-list,#list,.list')];
+    let listEl=candidates.find(x=>x.querySelectorAll('li').length>10);
+    if(listEl) {
+      listEl.innerHTML='';
+      item.items.forEach((txt,i)=>{
+        const li=document.createElement('li');
+        li.textContent=txt;
+        listEl.appendChild(li);
+      });
+    } else {
+      // Generic fallback: replace elements that look like numbered movie rows.
+      const numbered=[...note.querySelectorAll('[data-index], .movie, .list-item')];
+      if(numbered.length) numbered.forEach((el,i)=>{ if(item.items[i]) el.textContent=item.items[i]; });
+    }
+
+    // Publish selected data for the existing V5 force engine if it looks for globals.
+    window.NL_ACTIVE_LIST=item.items.slice();
+    window.NL_FORCE_ITEM=item.force;
+  }
+
+  function openNote(id) {
+    activeId=id; localStorage.setItem(ACTIVE,id);
+    applyListToPage(active());
+    show(note);
+    window.scrollTo(0,0);
+  }
+
+  function openManager(id) {
+    editingId=id;
+    const item=library.find(x=>x.id===id);
+    document.getElementById('editTitle').value=item?.title||'';
+    document.getElementById('editForce').value=item?.force||'';
+    document.getElementById('editItems').value=(item?.items||[]).join('\n');
+    show(manager);
+  }
+
+  document.getElementById('newNoteButton').addEventListener('click',()=> {
+    const id='list-'+Date.now();
+    library.push({id,title:'New Note',force:'',items:[],updated:Date.now()});
+    saveLibrary(library); openManager(id);
+  });
+  document.getElementById('newList').addEventListener('click',()=> {
+    const id='list-'+Date.now();
+    library.push({id,title:'New Note',force:'',items:[],updated:Date.now()});
+    saveLibrary(library); openManager(id);
+  });
+  document.getElementById('saveList').addEventListener('click',()=> {
+    const item=library.find(x=>x.id===editingId); if(!item)return;
+    item.title=document.getElementById('editTitle').value.trim()||'Untitled';
+    item.force=document.getElementById('editForce').value.trim();
+    item.items=document.getElementById('editItems').value.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+    item.updated=Date.now(); saveLibrary(library); openMenu();
+  });
+  document.getElementById('deleteList').addEventListener('click',()=> {
+    if(library.length<=1) return;
+    library=library.filter(x=>x.id!==editingId); saveLibrary(library);
+    if(activeId===editingId) activeId=library[0].id;
+    openMenu();
+  });
+  document.getElementById('managerBack').addEventListener('click',openMenu);
+  document.getElementById('managerClose').addEventListener('click',openMenu);
+
+  document.getElementById('exportLibrary').addEventListener('click',()=> {
+    const blob=new Blob([JSON.stringify(library,null,2)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='number-list-library.json'; a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+  });
+  document.getElementById('importLibrary').addEventListener('change',ev=>{
+    const f=ev.target.files?.[0]; if(!f)return;
+    const r=new FileReader();
+    r.onload=()=>{ try {
+      const x=JSON.parse(r.result);
+      if(Array.isArray(x)&&x.length){ library=x; saveLibrary(library); activeId=library[0].id; openMenu(); }
+    } catch(e){} };
+    r.readAsText(f);
+  });
+
+  // The visible Notes back button behaves like a real Notes back button.
+  const back=note.querySelector('button.back');
+  if(back) {
+    back.addEventListener('click', (e)=> {
+      e.preventDefault();
+      e.stopPropagation();
+      openMenu();
+    });
+  }
+
+  // Hidden management-room entrance from menu: long-hold the “All iCloud” heading.
+  const allIcloud=menu.querySelector('h1');
+  let mt;
+  allIcloud.addEventListener('touchstart',()=>mt=setTimeout(()=>openManager(activeId),900),{passive:true});
+  allIcloud.addEventListener('touchend',()=>clearTimeout(mt),{passive:true});
+
+  // Start in the selected note, preserving V5's performance-first launch.
+  applyListToPage(active());
+})();

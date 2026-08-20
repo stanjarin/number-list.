@@ -50,3 +50,13 @@ In app.js, change:
 
 MOVIE LIST
 The 100 titles are placeholders only. Replace DUMMY_MOVIES in app.js with any 100-item list, but do not include FORCE_ITEM in the dummy list.
+
+V6
+- Adds an editable local library of lists.
+- Hold the fake Notes back control to open the fake Notes library.
+- Hold “All iCloud” in the library to enter List Manager.
+- Add/edit/delete lists locally without GitHub.
+- Export/import the library as JSON for backup.
+- Existing V5 force controls are retained.
+
+V6a: fake Notes back button now opens library with an ordinary tap.

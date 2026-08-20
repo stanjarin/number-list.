@@ -9,9 +9,45 @@
   <title>Notes</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icon-180.png" />
-  <link rel="stylesheet" href="styles.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=6" />
 </head>
 <body>
+
+<div id="libraryMenu" class="nl-screen nl-hidden" aria-hidden="true">
+  <div class="nl-notes-head">
+    <div class="nl-folders">‹ <span>Folders</span></div>
+    <div class="nl-more">•••</div>
+    <h1>All iCloud</h1>
+    <div class="nl-search">⌕ <span>Search</span></div>
+  </div>
+  <div id="libraryRows" class="nl-library-rows"></div>
+  <div class="nl-menu-footer"><span id="noteCount"></span><button id="newNoteButton">□</button></div>
+</div>
+
+<div id="manager" class="nl-screen nl-hidden" aria-hidden="true">
+  <div class="nl-manager-head">
+    <button id="managerBack">‹ Library</button>
+    <strong>List Manager</strong>
+    <button id="managerClose">Done</button>
+  </div>
+  <div class="nl-manager-body">
+    <label>Title<input id="editTitle" type="text" autocomplete="off"></label>
+    <label>Force item<input id="editForce" type="text" autocomplete="off"></label>
+    <label>List — one item per line<textarea id="editItems" spellcheck="false"></textarea></label>
+    <div class="nl-manager-actions">
+      <button id="saveList">Save</button>
+      <button id="deleteList">Delete</button>
+      <button id="newList">New list</button>
+    </div>
+    <div class="nl-manager-actions">
+      <button id="exportLibrary">Export library</button>
+      <label class="nl-import">Import library<input id="importLibrary" type="file" accept="application/json,.json"></label>
+    </div>
+    <div class="nl-manager-note">Lists live on this device. Export is the backup.</div>
+  </div>
+</div>
+
+<div id="noteView">
   <main class="app" id="app" aria-label="Notes">
     <header class="topbar">
       <button class="back" type="button" aria-label="Back">‹ <span>Notes</span></button>
@@ -55,6 +91,7 @@
 
     <div id="status" class="status hidden"></div>
   </main>
-  <script src="app.js"></script>
+  <script src="app.js?v=6a"></script>
+</div>
 </body>
 </html>
