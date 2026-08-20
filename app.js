@@ -212,7 +212,7 @@ function holdTo(target,fn,ms=450){
   target.addEventListener('mouseleave',stop);
 }
 
-function openKeypad(){keypadDigits='';el.keypadHotspot.style.pointerEvents='none';el.keypad.classList.remove('hidden')}
+function openKeypad(){keypadDigits='';el.keypadHotspot.style.pointerEvents='none';el.keypad.classList.remove('hidden');setTimeout(showKeypadFeedback,0)}
 function closeKeypad(){el.keypad.classList.add('hidden');el.keypadHotspot.style.pointerEvents='auto'}
 function addDigit(d){
   if(keypadDigits.length>=2)return;
@@ -249,26 +249,40 @@ el.importLibrary.addEventListener('change',e=>{
 
 holdTo(el.keypadHotspot,openKeypad,450);
 holdTo(el.voiceHotspot,()=>{location.href='shortcuts://run-shortcut?name='+encodeURIComponent('Number List Voice')},450);
-function keypadAction(target){
-  const digit=target && target.closest ? target.closest('[data-digit]') : null;
-  if(digit){ addDigit(digit.dataset.digit); return; }
-  if(target && target.closest && target.closest('#keyCancel')){ closeKeypad(); return; }
-  if(target && target.closest && target.closest('#keyBack')){ keypadDigits=keypadDigits.slice(0,-1); return; }
+function showKeypadFeedback(){
+  let r=document.getElementById('keypadFeedback');
+  if(!r){
+    r=document.createElement('div');
+    r.id='keypadFeedback';
+    r.style.cssText='position:absolute;left:7px;top:4px;font-family:"Avenir Next Condensed","Helvetica Neue",sans-serif;font-size:14px;color:rgba(55,55,55,.25);pointer-events:none';
+    el.keypad.appendChild(r);
+  }
+  r.textContent=(keypadDigits+'——').slice(0,2);
 }
 
-let keypadTouchHandled=false;
-el.keypad.addEventListener('touchend',e=>{
-  e.preventDefault();
-  e.stopPropagation();
-  keypadTouchHandled=true;
-  keypadAction(e.target);
-},{passive:false});
+function directKey(elm,fn){
+  elm.ontouchstart=function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    fn();
+    return false;
+  };
+  elm.onclick=function(e){
+    e.preventDefault();
+    e.stopPropagation();
+    fn();
+    return false;
+  };
+}
 
-el.keypad.addEventListener('click',e=>{
-  e.preventDefault();
-  e.stopPropagation();
-  if(keypadTouchHandled){ keypadTouchHandled=false; return; }
-  keypadAction(e.target);
+el.keypad.querySelectorAll('[data-digit]').forEach(b=>directKey(b,()=>{
+  addDigit(b.dataset.digit);
+  showKeypadFeedback();
+}));
+directKey(el.keyCancel,closeKeypad);
+directKey(el.keyBack,()=>{
+  keypadDigits=keypadDigits.slice(0,-1);
+  showKeypadFeedback();
 });
 
 const now=new Date();
