@@ -286,6 +286,7 @@
   }
 
   function openMenu() { renderRows(); show(menu); }
+  window.NL_OPEN_MENU = openMenu;
 
   function applyListToPage(item) {
     // Replace heading with selected list title.
@@ -387,6 +388,7 @@
   allIcloud.addEventListener('touchstart',()=>mt=setTimeout(()=>openManager(activeId),900),{passive:true});
   allIcloud.addEventListener('touchend',()=>clearTimeout(mt),{passive:true});
 
-  // Start in the selected note, preserving V5's performance-first launch.
+  // Populate the fake Notes library immediately, then start in the selected note.
+  renderRows();
   applyListToPage(active());
 })();
