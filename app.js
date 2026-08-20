@@ -115,34 +115,12 @@
   }
 
   function startVoice() {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-      showStatus('Voice unavailable');
-      openKeypad();
-      return;
-    }
-    try {
-      const rec = new SR();
-      rec.lang = 'en-AU';
-      rec.interimResults = false;
-      rec.maxAlternatives = 3;
-      rec.continuous = false;
-      showStatus('Listening…', 1400);
-      rec.onresult = e => {
-        let n = null;
-        for (let i=0;i<e.results[0].length;i++) {
-          n = parseSpokenNumber(e.results[0][i].transcript);
-          if (validNumber(n)) break;
-        }
-        if (validNumber(n)) showAck(n);
-        else { showStatus('Try manual'); openKeypad(); }
-      };
-      rec.onerror = () => { showStatus('Try manual'); openKeypad(); };
-      rec.start();
-    } catch (_) {
-      showStatus('Try manual');
-      openKeypad();
-    }
+    // Hybrid voice route: hand speech capture to an iOS Shortcut.
+    // The Shortcut dictates the spectator's number, then opens this app with ?n=NN.
+    // Native Dictate Text is substantially more dependable than Safari speech recognition
+    // on the target iOS 16 phone.
+    const shortcutName = 'Number List Voice';
+    location.href = 'shortcuts://run-shortcut?name=' + encodeURIComponent(shortcutName);
   }
 
   function openKeypad() {
