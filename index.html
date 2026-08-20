@@ -1,98 +1,88 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="theme-color" content="#f7f7f4" />
-  <title>Notes</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icon-180.png" />
-  <link rel="stylesheet" href="styles.css?v=6d" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#f7f7f4">
+<title>Notes</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
 
-<div id="libraryMenu" class="nl-screen nl-hidden" aria-hidden="true">
-  <div class="nl-notes-head">
-    <div class="nl-folders">‹ <span>Folders</span></div>
-    <div class="nl-more">•••</div>
+<section id="libraryScreen" class="screen hidden">
+  <div class="libHead">
+    <div class="folders">‹ <span>Folders</span></div>
+    <div class="more">•••</div>
     <h1>All iCloud</h1>
-    <div class="nl-search">⌕ <span>Search</span></div>
+    <div class="search">⌕ <span>Search</span></div>
   </div>
-  <div id="libraryRows" class="nl-library-rows"></div>
-  <div class="nl-menu-footer"><span id="noteCount"></span><button id="newNoteButton">□</button></div>
-</div>
+  <div id="libraryRows" class="libraryRows">
+    <div class="sectionTitle">Previous 7 Days</div>
+    <div class="card">
+      <div class="row" data-id="movies">
+        <div class="rowTitle">100 Movies</div>
+        <div class="rowMeta">Today&nbsp;&nbsp;100 items</div>
+      </div>
+    </div>
+  </div>
+  <div class="libFooter"><span id="noteCount">1 Note</span><button id="addList" type="button">✎</button></div>
+</section>
 
-<div id="manager" class="nl-screen nl-hidden" aria-hidden="true">
-  <div class="nl-manager-head">
-    <button id="managerBack">‹ Library</button>
-    <strong>List Manager</strong>
-    <button id="managerClose">Done</button>
+<section id="managerScreen" class="screen hidden">
+  <div class="managerHead">
+    <button id="managerBack" type="button">‹ Library</button>
+    <strong>Edit List</strong>
+    <button id="managerDone" type="button">Done</button>
   </div>
-  <div class="nl-manager-body">
+  <div class="managerBody">
     <label>Title<input id="editTitle" type="text" autocomplete="off"></label>
     <label>Force item<input id="editForce" type="text" autocomplete="off"></label>
-    <label>List — one item per line<textarea id="editItems" spellcheck="false"></textarea></label>
-    <div class="nl-manager-actions">
-      <button id="saveList">Save</button>
-      <button id="deleteList">Delete</button>
-      <button id="newList">New list</button>
+    <label>Items — one per line<textarea id="editItems" spellcheck="false"></textarea></label>
+    <div class="managerActions">
+      <button id="saveList" type="button">Save</button>
+      <button id="deleteList" type="button">Delete</button>
+      <button id="newList" type="button">New list</button>
     </div>
-    <div class="nl-manager-actions">
-      <button id="exportLibrary">Export library</button>
-      <label class="nl-import">Import library<input id="importLibrary" type="file" accept="application/json,.json"></label>
+    <div class="managerActions">
+      <button id="exportLibrary" type="button">Export</button>
+      <label class="importButton">Import<input id="importLibrary" type="file" accept=".json,application/json"></label>
     </div>
-    <div class="nl-manager-note">Lists live on this device. Export is the backup.</div>
+    <p>Stored on this iPhone. Export is the backup.</p>
   </div>
-</div>
+</section>
 
-<div id="noteView">
-<button id="alwaysBack" type="button" aria-label="Back to Notes" onclick="document.getElementById('noteView').classList.add('nl-hidden');document.getElementById('manager').classList.add('nl-hidden');document.getElementById('libraryMenu').classList.remove('nl-hidden');" style="position:fixed;left:0;top:0;width:120px;height:90px;z-index:8999;opacity:0;border:0;background:transparent;"></button>
-  <main class="app" id="app" aria-label="Notes">
+<section id="noteScreen">
+  <main class="app">
     <header class="topbar">
-      <button class="back" type="button" aria-label="Back" onclick="document.getElementById('noteView').classList.add('nl-hidden');document.getElementById('manager').classList.add('nl-hidden');document.getElementById('libraryMenu').classList.remove('nl-hidden');document.getElementById('libraryMenu').setAttribute('aria-hidden','false');">‹ <span>Notes</span></button>
-      <div class="toolbar" aria-hidden="true">•••</div>
+      <button id="backToLibrary" class="back" type="button">‹ <span>Notes</span></button>
+      <div class="toolbar">•••</div>
     </header>
-
     <section class="note">
       <div class="date" id="dateLine"></div>
       <h1 id="noteTitle">100 Movies</h1>
-      <ol class="movie-list" id="movieList"></ol>
+      <ol id="itemList" class="itemList"></ol>
     </section>
+    <footer class="bottomBar"><span>☷</span><span>⌁</span><span>✎</span></footer>
 
-    <footer class="bottom-bar" aria-hidden="true">
-      <span>☷</span><span>⌁</span><span>✎</span>
-    </footer>
+    <button id="voiceHotspot" class="hotspot voiceHotspot" aria-label="Voice"></button>
+    <button id="keypadHotspot" class="hotspot keypadHotspot" aria-label="Manual"></button>
 
-    <!-- Performer controls: deliberately invisible until invoked. -->
-    <button id="voiceHotspot" class="hotspot voice-hotspot" aria-label="Voice input"></button>
-    <button id="keypadHotspot" class="hotspot keypad-hotspot" aria-label="Manual input"></button>
-    <button id="swapHotspot" class="hotspot swap-hotspot" aria-label="Commit"></button>
-
-    <div id="ack" class="ack hidden" role="dialog" aria-modal="true">
-      <div class="ack-card">
-        <div class="ack-number" id="ackNumber"></div>
-        <div class="ack-actions">
-          <button id="ackNo" type="button">No</button>
-          <button id="ackYes" type="button">Yes</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="keypad" class="keypad hidden" aria-label="Secret number input">
-      <div class="keypad-readout" id="keypadReadout">— —</div>
+    <div id="keypad" class="keypad hidden">
+      <div id="keyReadout" class="keyReadout">— —</div>
       <div class="keys">
         <button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button>
         <button data-digit="4">4</button><button data-digit="5">5</button><button data-digit="6">6</button>
         <button data-digit="7">7</button><button data-digit="8">8</button><button data-digit="9">9</button>
-        <button id="keypadCancel">×</button><button data-digit="0">0</button><button id="keypadBack">⌫</button>
+        <button id="keyCancel">×</button><button data-digit="0">0</button><button id="keyBack">⌫</button>
       </div>
     </div>
-
-    <div id="status" class="status hidden"></div>
   </main>
-  <script src="app.js?v=6d"></script>
-</div>
+</section>
+
+<script src="app.js?v=7"></script>
 </body>
 </html>
