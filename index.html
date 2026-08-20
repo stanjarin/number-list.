@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="theme-color" content="#f7f7f4" />
+  <title>Notes</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-180.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app" id="app" aria-label="Notes">
+    <header class="topbar">
+      <button class="back" type="button" aria-label="Back">‹ <span>Notes</span></button>
+      <div class="toolbar" aria-hidden="true">•••</div>
+    </header>
+
+    <section class="note">
+      <div class="date" id="dateLine"></div>
+      <h1 id="noteTitle">100 Movies</h1>
+      <ol class="movie-list" id="movieList"></ol>
+    </section>
+
+    <footer class="bottom-bar" aria-hidden="true">
+      <span>☷</span><span>⌁</span><span>✎</span>
+    </footer>
+
+    <!-- Performer controls: deliberately invisible until invoked. -->
+    <button id="voiceHotspot" class="hotspot voice-hotspot" aria-label="Voice input"></button>
+    <button id="keypadHotspot" class="hotspot keypad-hotspot" aria-label="Manual input"></button>
+    <button id="swapHotspot" class="hotspot swap-hotspot" aria-label="Commit"></button>
+
+    <div id="ack" class="ack hidden" role="dialog" aria-modal="true">
+      <div class="ack-card">
+        <div class="ack-number" id="ackNumber">76?</div>
+        <div class="ack-actions">
+          <button id="ackNo" type="button">No</button>
+          <button id="ackYes" type="button">Yes</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="keypad" class="keypad hidden" aria-label="Secret number input">
+      <div class="keypad-readout" id="keypadReadout">— —</div>
+      <div class="keys">
+        <button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button>
+        <button data-digit="4">4</button><button data-digit="5">5</button><button data-digit="6">6</button>
+        <button data-digit="7">7</button><button data-digit="8">8</button><button data-digit="9">9</button>
+        <button id="keypadCancel">×</button><button data-digit="0">0</button><button id="keypadBack">⌫</button>
+      </div>
+    </div>
+
+    <div id="status" class="status hidden"></div>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
