@@ -70,6 +70,7 @@ let activeId=localStorage.getItem(ACTIVE)||library[0].id;
 let editingId=null;
 let draftIsNew=false;
 let keypadDigits='';
+let currentItem=null;
 
 function persist(){
   localStorage.setItem(STORE,JSON.stringify(library));
@@ -79,6 +80,7 @@ function persist(){
 function active(){
   let item=library.find(x=>x.id===activeId);
   if(!item){item=library[0];activeId=item.id;}
+  currentItem=item;
   return item;
 }
 
@@ -94,14 +96,17 @@ function renderList(items){
 }
 
 function renderNote(item=active()){
+  currentItem=item;
+  activeId=item.id;
   el.noteTitle.textContent=item.title;
   renderList(item.items);
 }
 
 function openNote(id){
   activeId=id;
+  currentItem=library.find(x=>x.id===id) || library[0];
   persist();
-  renderNote(active());
+  renderNote(currentItem);
   show(el.noteScreen);
   el.noteScreen.scrollTop=0;
 }
@@ -188,11 +193,11 @@ function forcedList(item,n){
   items.splice(n-1,0,force);
   return items;
 }
-function validNumber(n){return Number.isInteger(n)&&n>=2&&n<=99}
+function validNumber(n){return Number.isInteger(n)&&n>=1&&n<=99}
 function commitForce(n){
   if(!validNumber(n)) return false;
-  const item=active();
-  if(!item.force) return false;
+  const item=currentItem || active();
+  if(!item || !item.force) return false;
   const out=forcedList(item,n);
   if(!out) return false;
   renderList(out);
@@ -219,8 +224,8 @@ function addDigit(d){
   keypadDigits+=d;
   if(keypadDigits.length===2){
     const n=Number(keypadDigits);
-    if(commitForce(n)) setTimeout(closeKeypad,80);
-    else keypadDigits='';
+    commitForce(n);
+    setTimeout(closeKeypad,80);
   }
 }
 

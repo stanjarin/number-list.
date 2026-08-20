@@ -1,13 +1,7 @@
-Number List V10f
+Number List V10g
 
-Rollback build.
-The entire experimental keypad touch/capture work has been discarded.
-Input is back to the last proven V5 model:
-- ordinary visible keypad buttons
-- ordinary click handlers
-- no transparent full-screen overlay
-- no diagnostic readout
-- no document-level coordinate capture
-
-V10 library/short-list behaviour is retained.
-The pencil-area long-press still opens the keypad.
+Fix:
+- The force now uses the exact list currently displayed on screen, not a possibly stale active record.
+- Single-digit positions 01–09 are accepted.
+- After two digits the keypad always closes, so input itself can no longer masquerade as "dead".
+- No touch/capture experiments added.
