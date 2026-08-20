@@ -37,3 +37,35 @@ h1{font-size:28px;line-height:1.1;margin:0 0 14px;font-weight:700}
 .keys button{height:72px;border:0;border-radius:12px;background:#292929;color:white;font-size:29px;font-weight:500}
 .status{position:fixed;top:calc(env(safe-area-inset-top) + 8px);left:50%;transform:translateX(-50%);z-index:120;background:#111;color:white;border-radius:15px;padding:5px 10px;font-size:12px;opacity:.9}
 @media (prefers-color-scheme:dark){:root{--paper:#f7f7f4;--ink:#111;--muted:#8c8c8c}}
+
+/* V5 — discreet translucent manual keypad overlay */
+html,body{font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif}
+.keypad{
+  inset:auto 6px calc(48px + env(safe-area-inset-bottom)) auto;
+  width:214px;
+  height:auto;
+  z-index:100;
+  background:rgba(247,247,244,.18);
+  display:block;
+  padding:5px;
+  border-radius:12px;
+  backdrop-filter:blur(1.5px);
+  -webkit-backdrop-filter:blur(1.5px);
+}
+.keypad>div{width:100%}
+.keypad-readout{display:none}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;width:100%}
+.keys button{
+  height:64px;
+  border:0;
+  border-radius:10px;
+  background:rgba(224,224,221,.32);
+  color:rgba(55,55,55,.19);
+  font-family:"Avenir Next Condensed","Helvetica Neue",sans-serif;
+  font-size:29px;
+  font-weight:400;
+  font-stretch:condensed;
+  box-shadow:none;
+}
+.keys button:active{background:rgba(210,210,207,.43);color:rgba(35,35,35,.28)}
+.bottom-bar{opacity:1}
