@@ -128,8 +128,7 @@ document.getElementById('managerBack').addEventListener('click',openLibrary);
 function saveEditor(){
   var titleValue=document.getElementById('editTitle').value.trim()||'Untitled';
   var forceValue=document.getElementById('editForce').value.trim();
-  var lines=document.getElementById('editItems').value.split(/?
-/);
+  var lines=document.getElementById('editItems').value.split(/\r?\n/);
   var itemsValue=[];
   for(var j=0;j<lines.length;j++){var x=lines[j].trim();if(x)itemsValue.push(x);}
   var item=null;
