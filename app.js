@@ -178,20 +178,24 @@ function deleteEditor(){
 }
 
 function forcedList(item,n){
+  const items=item.items.slice();
+  const len=items.length;
+  if(n<1 || n>len) return null;
   const force=item.force;
-  const clean=item.items.filter(x=>x!==force);
-  // Preserve the utility's 100-position behaviour even if an experimental list is short.
-  while(clean.length<99) clean.push('—');
-  const out=clean.slice(0,99);
-  out.splice(n-1,0,force);
-  return out.slice(0,100);
+  const forceIndex=items.indexOf(force);
+  if(forceIndex<0) return null;
+  items.splice(forceIndex,1);
+  items.splice(n-1,0,force);
+  return items;
 }
 function validNumber(n){return Number.isInteger(n)&&n>=2&&n<=99}
 function commitForce(n){
   if(!validNumber(n)) return false;
   const item=active();
   if(!item.force) return false;
-  renderList(forcedList(item,n));
+  const out=forcedList(item,n);
+  if(!out) return false;
+  renderList(out);
   el.noteScreen.scrollTop=0;
   return true;
 }
@@ -254,12 +258,15 @@ el.dateLine.textContent=now.toLocaleDateString('en-AU',{day:'numeric',month:'lon
 
 persist();
 renderNote(active());
-show(el.noteScreen);
+renderLibrary();
+show(el.libraryScreen);
 
 // Shortcut URL input.
 const params=new URLSearchParams(location.search);
 const supplied=Number(params.get('n'));
 if(validNumber(supplied)){
+  show(el.noteScreen);
+  renderNote(active());
   commitForce(supplied);
   try{history.replaceState({},'',location.pathname)}catch(e){}
 }

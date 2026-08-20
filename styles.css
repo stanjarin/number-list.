@@ -14,7 +14,7 @@ button,input,textarea{font:inherit}
 .note{padding:2px 24px 40px}
 .dateLine{text-align:center;color:var(--muted);font-size:12px;margin:2px 0 11px}
 #noteTitle{font-size:19px;line-height:1.15;margin:0 0 9px;font-weight:600}
-#noteList{margin:0;padding-left:34px;font-family:"Avenir Next Condensed","Helvetica Neue",sans-serif;font-size:18px;line-height:1.55}
+#noteList{margin:0;padding-left:34px;font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;font-size:18px;line-height:1.55}
 #noteList li{padding-left:3px}
 .noteFooter{position:fixed;left:0;right:0;bottom:0;height:calc(48px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);display:flex;align-items:center;justify-content:space-around;background:rgba(247,247,244,.97);border-top:1px solid rgba(0,0,0,.08);color:var(--yellow);font-size:23px;z-index:4}
 .hotspot{position:fixed;border:0;background:transparent;padding:0;z-index:20;opacity:0}
@@ -29,7 +29,7 @@ button,input,textarea{font:inherit}
 .libraryHead{position:absolute;left:0;right:0;top:0;height:245px;padding:calc(50px + env(safe-area-inset-top)) 20px 0}
 .folders{color:#b18b12;font-size:26px}.folders span{font-size:24px;vertical-align:2px}
 .more{position:absolute;right:22px;top:calc(50px + env(safe-area-inset-top));width:44px;height:44px;border:3px solid #b18b12;border-radius:50%;color:#b18b12;text-align:center;line-height:32px;font-size:25px}
-.libraryHead h2{font-size:44px;line-height:1;margin:34px 0 22px;letter-spacing:-1.8px}
+.libraryHead h2{font-size:34px;line-height:1;margin:34px 0 22px;letter-spacing:-1.8px}
 .search{height:48px;border-radius:12px;background:#dddde3;color:#696970;font-size:26px;line-height:48px;padding:0 14px}
 .libraryScroller{position:absolute;top:245px;bottom:calc(58px + env(safe-area-inset-bottom));left:0;right:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:17px 20px 30px}
 .sectionTitle{font-size:25px;font-weight:700;margin:0 18px 10px}
@@ -54,3 +54,5 @@ button,input,textarea{font:inherit}
 .backupRow button,.backupRow label{flex:1;border:1px solid #bbb;border-radius:8px;background:#fff;color:#111;padding:11px 8px;text-align:center;font-size:15px;margin:0}
 .backupRow label input{display:none}
 .storageNote{font-size:12px;color:#777}
+
+.keypadHotspot{left:auto!important;right:4px!important;bottom:calc(env(safe-area-inset-bottom) + 2px)!important;width:76px!important;height:56px!important}
