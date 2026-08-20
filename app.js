@@ -28,6 +28,7 @@ const el = {
   voiceHotspot:document.getElementById('voiceHotspot'),
   keypadHotspot:document.getElementById('keypadHotspot'),
   keypad:document.getElementById('keypad'),
+  keyCapture:document.getElementById('keyCapture'),
   keyCancel:document.getElementById('keyCancel'),
   keyBack:document.getElementById('keyBack')
 };
@@ -212,8 +213,8 @@ function holdTo(target,fn,ms=450){
   target.addEventListener('mouseleave',stop);
 }
 
-function openKeypad(){keypadDigits='';el.keypadHotspot.style.pointerEvents='none';el.keypad.classList.remove('hidden');setTimeout(showKeypadFeedback,0)}
-function closeKeypad(){el.keypad.classList.add('hidden');el.keypadHotspot.style.pointerEvents='auto'}
+function openKeypad(){keypadDigits='';el.keypadHotspot.style.pointerEvents='none';el.keyCapture.classList.remove('hidden');el.keypad.classList.remove('hidden');setTimeout(showKeypadFeedback,0)}
+function closeKeypad(){el.keyCapture.classList.add('hidden');el.keypad.classList.add('hidden');el.keypadHotspot.style.pointerEvents='auto'}
 function addDigit(d){
   if(keypadDigits.length>=2)return;
   keypadDigits+=d;
@@ -260,79 +261,49 @@ function showKeypadFeedback(){
   r.textContent=(keypadDigits+'——').slice(0,2);
 }
 
-function directKey(elm,fn){
-  elm.ontouchstart=function(e){
-    e.preventDefault();
-    e.stopPropagation();
-    fn();
-    return false;
-  };
-  elm.onclick=function(e){
-    e.preventDefault();
-    e.stopPropagation();
-    fn();
-    return false;
-  };
-}
 
-el.keypad.querySelectorAll('[data-digit]').forEach(b=>directKey(b,()=>{
-  addDigit(b.dataset.digit);
-  showKeypadFeedback();
-}));
-directKey(el.keyCancel,closeKeypad);
-directKey(el.keyBack,()=>{
-  keypadDigits=keypadDigits.slice(0,-1);
-  showKeypadFeedback();
-});
-
-
-// V10d: capture keypad taps by screen coordinates at document level.
-// This bypasses any invisible Safari/iOS layer stealing the button hit-test.
-let lastCapturedAt=0;
-function captureKeypadPoint(x,y,e){
-  if(el.keypad.classList.contains('hidden')) return false;
+function keyFromPoint(x,y){
   const r=el.keypad.getBoundingClientRect();
-  if(x<r.left || x>r.right || y<r.top || y>r.bottom) return false;
+  if(x<r.left || x>r.right || y<r.top || y>r.bottom) return null;
 
-  if(e){
-    e.preventDefault();
-    e.stopPropagation();
-    if(e.stopImmediatePropagation) e.stopImmediatePropagation();
-  }
-
-  const keysRect=el.keypad.querySelector('.keys').getBoundingClientRect();
-  const col=Math.max(0,Math.min(2,Math.floor((x-keysRect.left)/(keysRect.width/3))));
-  const row=Math.max(0,Math.min(3,Math.floor((y-keysRect.top)/(keysRect.height/4))));
-  const map=[
+  const keys=el.keypad.querySelector('.keys').getBoundingClientRect();
+  const cellW=keys.width/3;
+  const cellH=keys.height/4;
+  const col=Math.max(0,Math.min(2,Math.floor((x-keys.left)/cellW)));
+  const row=Math.max(0,Math.min(3,Math.floor((y-keys.top)/cellH)));
+  return [
     ['1','2','3'],
     ['4','5','6'],
     ['7','8','9'],
     ['x','0','back']
-  ];
-  const key=map[row][col];
-
-  if(key==='x') closeKeypad();
-  else if(key==='back'){
-    keypadDigits=keypadDigits.slice(0,-1);
-    showKeypadFeedback();
-  }else{
-    addDigit(key);
-    showKeypadFeedback();
-  }
-  lastCapturedAt=Date.now();
-  return true;
+  ][row][col];
 }
 
-document.addEventListener('touchstart',e=>{
-  if(!e.touches || !e.touches.length) return;
-  const t=e.touches[0];
-  captureKeypadPoint(t.clientX,t.clientY,e);
-},{capture:true,passive:false});
+function handleCapturedPoint(x,y){
+  const key=keyFromPoint(x,y);
+  if(!key) return;
+  if(key==='x'){ closeKeypad(); return; }
+  if(key==='back'){
+    keypadDigits=keypadDigits.slice(0,-1);
+    showKeypadFeedback();
+    return;
+  }
+  addDigit(key);
+  showKeypadFeedback();
+}
 
-document.addEventListener('pointerdown',e=>{
-  if(Date.now()-lastCapturedAt<250) return;
-  captureKeypadPoint(e.clientX,e.clientY,e);
-},{capture:true});
+el.keyCapture.addEventListener('touchend',e=>{
+  e.preventDefault();
+  e.stopPropagation();
+  const t=e.changedTouches && e.changedTouches[0];
+  if(t) handleCapturedPoint(t.clientX,t.clientY);
+},{passive:false});
+
+el.keyCapture.addEventListener('click',e=>{
+  e.preventDefault();
+  e.stopPropagation();
+  handleCapturedPoint(e.clientX,e.clientY);
+});
 
 const now=new Date();
 el.dateLine.textContent=now.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})+' at '+now.toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'});

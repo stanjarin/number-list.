@@ -77,3 +77,23 @@ button,input,textarea{font:inherit}
   user-select:none!important;
   -webkit-touch-callout:none!important;
 }
+
+/* V10e: a dedicated full-screen input sheet sits above every other element. */
+.keyCapture{
+  position:fixed;
+  inset:0;
+  z-index:20000;
+  background:transparent;
+  touch-action:none;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+.keypad{
+  z-index:20001!important;
+  pointer-events:none!important;
+}
+.keypad .keys,
+.keypad .keys button{
+  pointer-events:none!important;
+}

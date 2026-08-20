@@ -1,4 +1,8 @@
-Number List V10d
-Keypad input is now captured at document level by screen coordinates.
-This deliberately bypasses DOM button hit-testing and any transparent/iOS layer intercepting the visible keypad.
-The faint two-character diagnostic readout remains for this test.
+Number List V10e
+
+Keypad input rebuilt again:
+- When keypad appears, a dedicated transparent full-screen capture sheet is placed above the entire app.
+- The visible keypad is display-only.
+- All taps are caught by that top sheet and mapped by coordinates to keypad cells.
+- Nothing in Safari, the note, footer, hotspots, or keypad DOM buttons can steal the tap.
+- Faint diagnostic readout retained.
