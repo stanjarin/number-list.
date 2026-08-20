@@ -65,3 +65,8 @@ button,input,textarea{font:inherit}
   touch-action:manipulation;
 }
 .keys button{pointer-events:auto}
+
+/* V10b: keypad itself owns all touches; nothing underneath can steal them. */
+.keypad{pointer-events:auto!important;z-index:10000!important}
+.keys{pointer-events:auto!important}
+.keys button{pointer-events:auto!important;position:relative;z-index:10001}

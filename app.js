@@ -249,24 +249,27 @@ el.importLibrary.addEventListener('change',e=>{
 
 holdTo(el.keypadHotspot,openKeypad,450);
 holdTo(el.voiceHotspot,()=>{location.href='shortcuts://run-shortcut?name='+encodeURIComponent('Number List Voice')},450);
-function fastTap(elm,fn){
-  let touched=false;
-  elm.addEventListener('touchstart',e=>{
-    e.preventDefault();
-    e.stopPropagation();
-    touched=true;
-    fn();
-  },{passive:false});
-  elm.addEventListener('click',e=>{
-    e.preventDefault();
-    e.stopPropagation();
-    if(touched){touched=false;return;}
-    fn();
-  });
+function keypadAction(target){
+  const digit=target && target.closest ? target.closest('[data-digit]') : null;
+  if(digit){ addDigit(digit.dataset.digit); return; }
+  if(target && target.closest && target.closest('#keyCancel')){ closeKeypad(); return; }
+  if(target && target.closest && target.closest('#keyBack')){ keypadDigits=keypadDigits.slice(0,-1); return; }
 }
-el.keypad.querySelectorAll('[data-digit]').forEach(b=>fastTap(b,()=>addDigit(b.dataset.digit)));
-fastTap(el.keyCancel,closeKeypad);
-fastTap(el.keyBack,()=>{keypadDigits=keypadDigits.slice(0,-1)});
+
+let keypadTouchHandled=false;
+el.keypad.addEventListener('touchend',e=>{
+  e.preventDefault();
+  e.stopPropagation();
+  keypadTouchHandled=true;
+  keypadAction(e.target);
+},{passive:false});
+
+el.keypad.addEventListener('click',e=>{
+  e.preventDefault();
+  e.stopPropagation();
+  if(keypadTouchHandled){ keypadTouchHandled=false; return; }
+  keypadAction(e.target);
+});
 
 const now=new Date();
 el.dateLine.textContent=now.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})+' at '+now.toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'});
