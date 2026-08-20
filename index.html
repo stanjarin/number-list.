@@ -9,7 +9,7 @@
   <title>Notes</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icon-180.png" />
-  <link rel="stylesheet" href="styles.css?v=6b" />
+  <link rel="stylesheet" href="styles.css?v=6c" />
 </head>
 <body>
 
@@ -48,6 +48,7 @@
 </div>
 
 <div id="noteView">
+<button id="alwaysBack" type="button" aria-label="Back to Notes" onclick="document.getElementById('noteView').classList.add('nl-hidden');document.getElementById('manager').classList.add('nl-hidden');document.getElementById('libraryMenu').classList.remove('nl-hidden');" style="position:fixed;left:0;top:0;width:120px;height:90px;z-index:8999;opacity:0;border:0;background:transparent;"></button>
   <main class="app" id="app" aria-label="Notes">
     <header class="topbar">
       <button class="back" type="button" aria-label="Back" onclick="document.getElementById('noteView').classList.add('nl-hidden');document.getElementById('manager').classList.add('nl-hidden');document.getElementById('libraryMenu').classList.remove('nl-hidden');document.getElementById('libraryMenu').setAttribute('aria-hidden','false');">‹ <span>Notes</span></button>
@@ -91,7 +92,7 @@
 
     <div id="status" class="status hidden"></div>
   </main>
-  <script src="app.js?v=6b"></script>
+  <script src="app.js?v=6c"></script>
 </div>
 </body>
 </html>

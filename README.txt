@@ -62,3 +62,5 @@ V6
 V6a: fake Notes back button now opens library with an ordinary tap.
 
 V6b: Notes back control is now wired directly in HTML; no event-handler dependency.
+
+V6c: permanent invisible top-left back zone; tap top-left/Notes area always returns to All iCloud.
