@@ -285,6 +285,55 @@ directKey(el.keyBack,()=>{
   showKeypadFeedback();
 });
 
+
+// V10d: capture keypad taps by screen coordinates at document level.
+// This bypasses any invisible Safari/iOS layer stealing the button hit-test.
+let lastCapturedAt=0;
+function captureKeypadPoint(x,y,e){
+  if(el.keypad.classList.contains('hidden')) return false;
+  const r=el.keypad.getBoundingClientRect();
+  if(x<r.left || x>r.right || y<r.top || y>r.bottom) return false;
+
+  if(e){
+    e.preventDefault();
+    e.stopPropagation();
+    if(e.stopImmediatePropagation) e.stopImmediatePropagation();
+  }
+
+  const keysRect=el.keypad.querySelector('.keys').getBoundingClientRect();
+  const col=Math.max(0,Math.min(2,Math.floor((x-keysRect.left)/(keysRect.width/3))));
+  const row=Math.max(0,Math.min(3,Math.floor((y-keysRect.top)/(keysRect.height/4))));
+  const map=[
+    ['1','2','3'],
+    ['4','5','6'],
+    ['7','8','9'],
+    ['x','0','back']
+  ];
+  const key=map[row][col];
+
+  if(key==='x') closeKeypad();
+  else if(key==='back'){
+    keypadDigits=keypadDigits.slice(0,-1);
+    showKeypadFeedback();
+  }else{
+    addDigit(key);
+    showKeypadFeedback();
+  }
+  lastCapturedAt=Date.now();
+  return true;
+}
+
+document.addEventListener('touchstart',e=>{
+  if(!e.touches || !e.touches.length) return;
+  const t=e.touches[0];
+  captureKeypadPoint(t.clientX,t.clientY,e);
+},{capture:true,passive:false});
+
+document.addEventListener('pointerdown',e=>{
+  if(Date.now()-lastCapturedAt<250) return;
+  captureKeypadPoint(e.clientX,e.clientY,e);
+},{capture:true});
+
 const now=new Date();
 el.dateLine.textContent=now.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'})+' at '+now.toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'});
 

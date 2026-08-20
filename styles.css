@@ -70,3 +70,10 @@ button,input,textarea{font:inherit}
 .keypad{pointer-events:auto!important;z-index:10000!important}
 .keys{pointer-events:auto!important}
 .keys button{pointer-events:auto!important;position:relative;z-index:10001}
+
+/* V10d: buttons are only visual; document-level coordinate capture owns keypad input. */
+.keypad,.keys,.keys button{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+}

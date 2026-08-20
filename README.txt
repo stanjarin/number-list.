@@ -1,4 +1,4 @@
-Number List V10c
-Keypad buttons are now wired directly on each button (touchstart + click), bypassing delegated event handling.
-A tiny low-contrast two-character readout appears inside the keypad so a test immediately proves whether each touch was received.
-No other behaviour changed.
+Number List V10d
+Keypad input is now captured at document level by screen coordinates.
+This deliberately bypasses DOM button hit-testing and any transparent/iOS layer intercepting the visible keypad.
+The faint two-character diagnostic readout remains for this test.
