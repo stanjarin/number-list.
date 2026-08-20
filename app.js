@@ -183,6 +183,10 @@
   els.keypadCancel.addEventListener('click', closeKeypad);
   els.keypadBack.addEventListener('click', () => { keypadDigits = keypadDigits.slice(0,-1); updateKeypad(); });
 
+  // Draw the innocent list first. If a Shortcut supplied ?n=76,
+  // the forced version is then built and rendered over it.
+  render(DUMMY_MOVIES);
+
   // Shortcut / URL input: .../index.html?n=76
   const params = new URLSearchParams(location.search);
   const supplied = Number(params.get('n'));
@@ -195,7 +199,5 @@
 
   const now = new Date();
   els.date.textContent = now.toLocaleDateString('en-AU',{day:'numeric',month:'long',year:'numeric'}) + ' at ' + now.toLocaleTimeString('en-AU',{hour:'numeric',minute:'2-digit'});
-
-  render(DUMMY_MOVIES);
 
 })();
