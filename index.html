@@ -10,7 +10,7 @@
 <title>Notes</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
-<link rel="stylesheet" href="styles.css?v=10m">
+<link rel="stylesheet" href="styles.css?v=10n">
 </head>
 <body>
 <section id="noteScreen" class="screen hidden">
@@ -61,9 +61,17 @@
     <label>Force item<input id="editForce" type="text" autocomplete="off"></label>
     <label>Items — one per line<textarea id="editItems" spellcheck="false"></textarea></label>
     <button id="deleteList" class="deleteButton" type="button">Delete List</button>
-    <div class="backupRow">
-      <button id="exportLibrary" type="button">Back Up Library</button>
-      <label>Restore Library<input id="importLibrary" type="file" accept=".json,application/json"></label>
+
+    <div class="yardSection">
+      <strong>Library</strong>
+      <label class="fileButton">Import List
+        <input id="importTextList" type="file" accept=".txt,text/plain">
+      </label>
+      <p class="storageNote">Plain text: optional TITLE: … and FORCE: … lines; remaining lines become the list.</p>
+      <div class="backupRow">
+        <button id="exportLibrary" type="button">Back Up Library</button>
+        <label>Restore Library<input id="importLibrary" type="file" accept=".json,application/json"></label>
+      </div>
     </div>
     <p class="storageNote">Stored on this iPhone.</p>
   </main>
@@ -84,25 +92,10 @@
     </label>
     <p id="yardMode" class="storageNote"></p>
 
-    <div class="yardSection">
-      <strong>Add a list from a plain-text file</strong>
-      <label class="fileButton">Import List
-        <input id="importTextList" type="file" accept=".txt,text/plain">
-      </label>
-      <p class="storageNote">Optional first lines: TITLE: … and FORCE: …; remaining lines become the list.</p>
-    </div>
-
-    <div class="yardSection">
-      <strong>Whole-library safety copy</strong>
-      <div class="backupRow">
-        <button id="yardExportLibrary" type="button">Back Up Library</button>
-        <label>Restore Library<input id="yardImportLibrary" type="file" accept=".json,application/json"></label>
-      </div>
-    </div>
   </main>
 </section>
 
 <div id="selftestResult" class="hidden"></div>
-<script src="app.js?v=10m"></script>
+<script src="app.js?v=10n"></script>
 </body>
 </html>

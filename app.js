@@ -37,9 +37,7 @@ const el = {
   yardForce:document.getElementById('yardForce'),
   yardList:document.getElementById('yardList'),
   yardMode:document.getElementById('yardMode'),
-  importTextList:document.getElementById('importTextList'),
-  yardExportLibrary:document.getElementById('yardExportLibrary'),
-  yardImportLibrary:document.getElementById('yardImportLibrary')
+  importTextList:document.getElementById('importTextList')
 };
 
 function defaults(){
@@ -276,10 +274,7 @@ function importTextListFile(file){
     activeId=rec.id;
     currentItem=rec;
     persist();
-    renderYardLists();
-    el.yardList.value=rec.id;
-    el.yardForce.value=rec.force;
-    updateYardMode();
+    openLibrary();
   };
   r.readAsText(file);
 }
@@ -404,8 +399,6 @@ el.yardList.addEventListener('change',()=>{
 });
 el.yardForce.addEventListener('input',updateYardMode);
 el.importTextList.addEventListener('change',e=>importTextListFile(e.target.files?.[0]));
-el.yardExportLibrary.addEventListener('click',exportWholeLibrary);
-el.yardImportLibrary.addEventListener('change',e=>restoreWholeLibrary(e.target.files?.[0]));
 
 
 // V10m: pencil/keypad hotspot gets its own iOS-safe hold.

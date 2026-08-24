@@ -126,3 +126,29 @@ V10M TEST
 3. Confirm keypad opens with NO blue selection overlay.
 4. Enter two digits immediately; both must register.
 5. Confirm normal note scrolling remains intact.
+
+
+V10N — 2026-08-24 INFORMATION-ARCHITECTURE CLEANUP
+
+Field observation:
+- Import List and whole-library backup/restore were conceptually misplaced inside Switching Yard.
+- Switching Yard is for routing/changing a force among existing lists, not creating/managing the library.
+
+V10N:
+- Switching Yard now contains only:
+  • Force word / item
+  • Send to list
+  • Internal/external force status
+  • Apply / Cancel
+- Import List moved to the New/Edit List screen reached from the library pencil.
+- Back Up Library and Restore Library live with Import List under Library management.
+- TXT import behaviour itself is unchanged.
+- After importing a TXT list, app returns to All iCloud so the new list is immediately visible.
+- V10M pencil-hold fix and all proven force/scroll fixes retained.
+
+V10N TEST
+1. Library pencil -> New List screen.
+2. Import List is present there.
+3. Import TXT -> returns to All iCloud with new list visible.
+4. Long-press All iCloud -> clean Switching Yard with no import/backup controls.
+5. Existing pencil long-press keypad remains free of blue iOS selection.
