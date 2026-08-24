@@ -143,11 +143,12 @@ function renderLibrary(){
     });
     row.addEventListener('touchstart',()=>{
       held=false;
+      document.body.classList.add('covertHold');
       clearTimeout(timer);
-      timer=setTimeout(()=>{held=true;openEditor(item.id)},700);
+      timer=setTimeout(()=>{held=true;document.body.classList.remove('covertHold');openEditor(item.id)},700);
     },{passive:true});
-    row.addEventListener('touchend',()=>clearTimeout(timer),{passive:true});
-    row.addEventListener('touchcancel',()=>{clearTimeout(timer);held=false},{passive:true});
+    row.addEventListener('touchend',()=>{clearTimeout(timer);document.body.classList.remove('covertHold')},{passive:true});
+    row.addEventListener('touchcancel',()=>{clearTimeout(timer);held=false;document.body.classList.remove('covertHold')},{passive:true});
     row.addEventListener('contextmenu',e=>e.preventDefault());
     card.appendChild(row);
   });
@@ -346,24 +347,28 @@ function commitForce(n){
 function holdTo(target,fn,ms=450){
   let timer=null;
   let touchActive=false;
-  const fire=()=>{timer=null;fn()};
+  const unlock=()=>document.body.classList.remove('covertHold');
+  const fire=()=>{timer=null;unlock();fn()};
   const touchStart=()=>{
     touchActive=true;
+    document.body.classList.add('covertHold');
     clearTimeout(timer);
     timer=setTimeout(fire,ms);
   };
   const mouseStart=()=>{
     if(touchActive)return;
+    document.body.classList.add('covertHold');
     clearTimeout(timer);
     timer=setTimeout(fire,ms);
   };
-  const stop=()=>{clearTimeout(timer);timer=null};
+  const stop=()=>{clearTimeout(timer);timer=null;unlock()};
   target.addEventListener('touchstart',touchStart,{passive:true});
   target.addEventListener('touchend',()=>{stop();setTimeout(()=>{touchActive=false},400)},{passive:true});
   target.addEventListener('touchcancel',()=>{stop();touchActive=false},{passive:true});
   target.addEventListener('mousedown',mouseStart);
   target.addEventListener('mouseup',stop);
   target.addEventListener('mouseleave',stop);
+  target.addEventListener('contextmenu',e=>e.preventDefault());
 }
 
 function openKeypad(){ keypadDigits=''; el.keypad.classList.remove('hidden'); }
@@ -402,7 +407,34 @@ el.importTextList.addEventListener('change',e=>importTextListFile(e.target.files
 el.yardExportLibrary.addEventListener('click',exportWholeLibrary);
 el.yardImportLibrary.addEventListener('change',e=>restoreWholeLibrary(e.target.files?.[0]));
 
-holdTo(el.keypadHotspot,openKeypad,450);
+
+// V10m: pencil/keypad hotspot gets its own iOS-safe hold.
+// Prevent native text selection ONLY on this covert trigger.
+// Keypad buttons themselves are not prevented and remain fully interactive.
+(function(){
+  let timer=null;
+  const stop=()=>{clearTimeout(timer);timer=null};
+  el.keypadHotspot.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    stop();
+    timer=setTimeout(()=>{timer=null;openKeypad()},450);
+  },{passive:false});
+  el.keypadHotspot.addEventListener('touchend',e=>{
+    e.preventDefault();
+    stop();
+  },{passive:false});
+  el.keypadHotspot.addEventListener('touchcancel',stop,{passive:true});
+  el.keypadHotspot.addEventListener('contextmenu',e=>e.preventDefault());
+
+  // Desktop/mouse fallback for development.
+  el.keypadHotspot.addEventListener('mousedown',()=>{
+    stop();
+    timer=setTimeout(()=>{timer=null;openKeypad()},450);
+  });
+  el.keypadHotspot.addEventListener('mouseup',stop);
+  el.keypadHotspot.addEventListener('mouseleave',stop);
+})();
+
 holdTo(el.voiceHotspot,()=>{location.href='shortcuts://run-shortcut?name='+encodeURIComponent('Number List Voice')},450);
 el.keypad.querySelectorAll('[data-digit]').forEach(btn => btn.addEventListener('click', () => addDigit(btn.dataset.digit)));
 el.keyCancel.addEventListener('click', closeKeypad);

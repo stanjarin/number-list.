@@ -82,28 +82,47 @@ Test on actual iPhone Home app:
 - existing keypad/force behavior remains unchanged
 
 
-V10k — 2026-08-24 TEST/FIX PASS
+V10L — 2026-08-24 FIELD FIX
 
-V10j field-test findings:
-- Plain-text TXT import worked.
-- Imported list was created and counted.
-- iPhone Safari library could not scroll far enough to reveal lower imported rows.
-- Desktop interaction became frozen/broken.
+Observed after V10k:
+- Long-pressing the pencil/keypad hotspot on iPhone could invoke native iOS text selection across the note/keypad area.
+- This was functional, not merely cosmetic: the selection overlay interfered with keypad input.
 
-V10k fixes:
-- Removed preventDefault() from note-row long-press handling.
-- Restored ordinary note click/open behaviour.
-- Long-press note still opens Edit List after ~700 ms.
-- Native blue-selection/callout suppression remains CSS-only on covert long-press surfaces.
-- Revised holdTo() so touch and synthetic mouse events do not interfere.
-- Increased library-scroller bottom clearance and explicitly permits vertical pan.
-- Switching Yard, TXT import, backup/restore and V10i force engine otherwise unchanged.
+V10L:
+- Selection suppression is now gesture-scoped.
+- Starting any covert hold temporarily adds a page-level selection/callout lock.
+- The lock is removed when the hold fires, ends, or is cancelled.
+- No preventDefault() is used on keypad buttons.
+- Actual input, textarea and select fields remain explicitly selectable/editable.
+- Includes V10k fixes: restored normal row clicks, safer touch/mouse coexistence, and extra library scrolling clearance.
+- Switching Yard, TXT import and V10i force engine unchanged.
 
-V10k TEST CHECKLIST
-1. Desktop click note -> opens note.
-2. Desktop long-press note -> opens Edit List.
-3. iPhone library scrolls to all rows.
-4. iPhone long-press note -> Edit List without blue wash.
-5. Long-press All iCloud -> Switching Yard.
-6. TXT import adds a list without replacing library.
-7. Existing covert keypad still works.
+V10L TEST
+1. Long-press pencil -> keypad appears with NO blue native selection.
+2. Immediately enter two digits -> keypad accepts both.
+3. Long-press note -> Edit List with no blue wash.
+4. Long-press All iCloud -> Switching Yard.
+5. Library scrolls to every imported note.
+
+
+V10M — 2026-08-24 PENCIL-HOLD SURGICAL FIX
+
+V10L field result:
+- Native iOS text selection still appeared when long-pressing the pencil/keypad hotspot in Safari.
+- The blue selection overlay interfered with keypad input.
+
+V10M change:
+- Pencil/keypad hotspot no longer uses the generic holdTo() helper.
+- It now has a dedicated touch handler using preventDefault() ONLY on the covert pencil trigger.
+- The long press still opens keypad after ~450 ms.
+- Keypad buttons themselves do NOT use preventDefault() and remain fully interactive.
+- Native text selection/callout is explicitly disabled on the pencil hotspot only.
+- Note-row and All iCloud long-press handling remains as in V10L.
+- Switching Yard, TXT import, scroll fix and V10i force engine unchanged.
+
+V10M TEST
+1. In Safari, open a list.
+2. Long-press pencil hotspot.
+3. Confirm keypad opens with NO blue selection overlay.
+4. Enter two digits immediately; both must register.
+5. Confirm normal note scrolling remains intact.
