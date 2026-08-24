@@ -80,3 +80,30 @@ Test on actual iPhone Home app:
 - Switching Yard can reroute force to another list
 - Import RGB.txt from Files/iCloud adds list to Home app
 - existing keypad/force behavior remains unchanged
+
+
+V10k — 2026-08-24 TEST/FIX PASS
+
+V10j field-test findings:
+- Plain-text TXT import worked.
+- Imported list was created and counted.
+- iPhone Safari library could not scroll far enough to reveal lower imported rows.
+- Desktop interaction became frozen/broken.
+
+V10k fixes:
+- Removed preventDefault() from note-row long-press handling.
+- Restored ordinary note click/open behaviour.
+- Long-press note still opens Edit List after ~700 ms.
+- Native blue-selection/callout suppression remains CSS-only on covert long-press surfaces.
+- Revised holdTo() so touch and synthetic mouse events do not interfere.
+- Increased library-scroller bottom clearance and explicitly permits vertical pan.
+- Switching Yard, TXT import, backup/restore and V10i force engine otherwise unchanged.
+
+V10k TEST CHECKLIST
+1. Desktop click note -> opens note.
+2. Desktop long-press note -> opens Edit List.
+3. iPhone library scrolls to all rows.
+4. iPhone long-press note -> Edit List without blue wash.
+5. Long-press All iCloud -> Switching Yard.
+6. TXT import adds a list without replacing library.
+7. Existing covert keypad still works.

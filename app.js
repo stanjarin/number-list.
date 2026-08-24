@@ -135,11 +135,19 @@ function renderLibrary(){
     const rt=document.createElement('div');rt.className='rowTitle';rt.textContent=item.title;
     const rm=document.createElement('div');rm.className='rowMeta';rm.textContent=`Today  ${item.items.length} items`;
     row.append(rt,rm);
-    row.addEventListener('click',()=>openNote(item.id));
     let timer=null;
-    row.addEventListener('touchstart',e=>{e.preventDefault();timer=setTimeout(()=>openEditor(item.id),700)},{passive:false});
-    row.addEventListener('touchend',e=>{clearTimeout(timer); if(timer){ /* click follows normally on iOS */ }},{passive:true});
-    row.addEventListener('touchcancel',()=>clearTimeout(timer),{passive:true});
+    let held=false;
+    row.addEventListener('click',e=>{
+      if(held){held=false;e.preventDefault();return;}
+      openNote(item.id);
+    });
+    row.addEventListener('touchstart',()=>{
+      held=false;
+      clearTimeout(timer);
+      timer=setTimeout(()=>{held=true;openEditor(item.id)},700);
+    },{passive:true});
+    row.addEventListener('touchend',()=>clearTimeout(timer),{passive:true});
+    row.addEventListener('touchcancel',()=>{clearTimeout(timer);held=false},{passive:true});
     row.addEventListener('contextmenu',e=>e.preventDefault());
     card.appendChild(row);
   });
@@ -337,12 +345,23 @@ function commitForce(n){
 
 function holdTo(target,fn,ms=450){
   let timer=null;
-  const start=e=>{if(e.type==='touchstart')e.preventDefault();timer=setTimeout(fn,ms)};
-  const stop=()=>clearTimeout(timer);
-  target.addEventListener('touchstart',start,{passive:false});
-  target.addEventListener('touchend',stop);
-  target.addEventListener('touchcancel',stop);
-  target.addEventListener('mousedown',start);
+  let touchActive=false;
+  const fire=()=>{timer=null;fn()};
+  const touchStart=()=>{
+    touchActive=true;
+    clearTimeout(timer);
+    timer=setTimeout(fire,ms);
+  };
+  const mouseStart=()=>{
+    if(touchActive)return;
+    clearTimeout(timer);
+    timer=setTimeout(fire,ms);
+  };
+  const stop=()=>{clearTimeout(timer);timer=null};
+  target.addEventListener('touchstart',touchStart,{passive:true});
+  target.addEventListener('touchend',()=>{stop();setTimeout(()=>{touchActive=false},400)},{passive:true});
+  target.addEventListener('touchcancel',()=>{stop();touchActive=false},{passive:true});
+  target.addEventListener('mousedown',mouseStart);
   target.addEventListener('mouseup',stop);
   target.addEventListener('mouseleave',stop);
 }

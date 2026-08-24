@@ -31,7 +31,7 @@ button,input,textarea,select{font:inherit}
 .more{position:absolute;right:22px;top:calc(50px + env(safe-area-inset-top));width:44px;height:44px;border:3px solid #b18b12;border-radius:50%;color:#b18b12;text-align:center;line-height:32px;font-size:25px}
 .libraryHead h2{font-size:34px;line-height:1;margin:34px 0 22px;letter-spacing:-1.8px}
 .search{height:48px;border-radius:12px;background:#dddde3;color:#696970;font-size:26px;line-height:48px;padding:0 14px}
-.libraryScroller{position:absolute;top:245px;bottom:calc(58px + env(safe-area-inset-bottom));left:0;right:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:17px 20px 30px}
+.libraryScroller{position:absolute;top:245px;bottom:calc(58px + env(safe-area-inset-bottom));left:0;right:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:17px 20px calc(90px + env(safe-area-inset-bottom));touch-action:pan-y}
 .sectionTitle{font-size:25px;font-weight:700;margin:0 18px 10px}
 .card{background:#fff;border-radius:12px;overflow:hidden}
 .libraryRow{padding:14px 18px 13px;border-bottom:1px solid #d8d8dc;touch-action:manipulation}
@@ -64,3 +64,5 @@ button,input,textarea,select{font:inherit}
 /* V10j: suppress native blue selection/callout only on covert long-press surfaces */
 .libraryRow,#allICloud{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #allICloud{touch-action:manipulation}
+
+.libraryRow,#allICloud{cursor:pointer}
