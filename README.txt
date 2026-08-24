@@ -1,25 +1,82 @@
-Number List V10i
+LISTS / Number List V10j — CANONICAL PROJECT SPEC
+Updated: 2026-08-24
 
-Dual-mode force engine:
+PURPOSE
+iPhone Home-screen web utility disguised as Apple Notes. It presents ordinary numbered lists while allowing a covert force item to appear at a chosen number.
 
-1. INTERNAL FORCE
-If the force item is already in the list, it is moved to the entered position.
-All list members remain present and the list length is unchanged.
+CURRENT WORKING ARCHITECTURE
+- Opens on fake “All iCloud” library/menu.
+- Each list has: title, force item, items.
+- Data is stored in localStorage on that app instance.
+- Safari and the Home-screen app have separate localStorage. Create/edit/import performance lists in the Home app.
+- Pencil-area long press opens covert two-digit keypad.
+- 01–09 require a 0 prefix.
+- Internal force: if force already exists in list, it moves to chosen position and all members remain.
+- External force: if force is absent, it replaces the item at chosen position.
+- Short lists remain short.
+- Spectator can be handed the phone to scroll to the chosen number.
 
-2. EXTERNAL FORCE
-If the force item is not in the list, it replaces the item at the entered position.
-The list length is unchanged.
+GESTURES
+- Tap a note in All iCloud: open that list.
+- Long-press a note row (~700 ms): open that note’s Edit List screen.
+- Long-press All iCloud (~700 ms): open Switching Yard master dashboard.
+- Long-press pencil-area hotspot (~450 ms): open covert number keypad.
+- Emergency/voice hotspot behavior remains as in V10i if used.
 
-Mode is inferred automatically from the list; no setting is required.
+V10j NEW — SWITCHING YARD
+At Fake Notes level:
+1. Long-press “All iCloud”.
+2. Enter/change Force word / item.
+3. Select destination list.
+4. Apply.
+This changes that list’s stored force item without changing its item list.
+The panel reports whether the force will operate internally (existing item) or externally (replacement).
 
-Examples:
-- RGB = Red/Green/Blue, force Red -> internal move.
-- Movies list without The Third Man, force The Third Man -> external substitution.
+V10j NEW — PLAIN-TEXT LIST IMPORT
+From Switching Yard tap Import List, then choose a .txt file in iOS Files/iCloud Drive.
+Supported human-readable format:
 
-Other V10g behaviour retained:
-- opens on All iCloud
-- public font restored
-- condensed numerals only on keypad
-- pencil-area long press opens keypad
-- 01–09 accepted
-- short lists stay short
+TITLE: RGB
+FORCE: Red
+
+Red
+Green
+Blue
+
+- TITLE is optional. If omitted, filename becomes title.
+- FORCE is optional.
+- Remaining nonblank lines become the list items.
+- Import ADDS one new list to the existing library; it does not replace the library.
+- Imported list becomes active and appears in All iCloud.
+
+WHOLE-LIBRARY SAFETY COPY
+Still supported, now human-labelled:
+- Back Up Library -> saves “Lists Backup YYYY-MM-DD.json”
+- Restore Library -> selects that backup in Files and replaces the whole current library.
+This JSON format is for safety/transfer, not everyday list creation.
+
+V10j FIX — IOS BLUE SELECTION
+Native text selection/callout is suppressed only on covert long-press surfaces:
+- library note rows
+- All iCloud heading
+Actual Edit List and Switching Yard input fields remain fully live/editable/selectable.
+
+KNOWN RULES / QUIRKS
+- Home app and Safari storage are separate.
+- Prefer Home app for performance and permanent list edits.
+- Do not expose admin/covert screens to spectators.
+- Public-facing typography stays ordinary iOS/system style; condensed numerals only belong to covert keypad.
+- Do not use Arial.
+- $$$ token/macro substitution is deliberately PARKED until a real performance need appears.
+
+VERSION HISTORY
+V10i — proven dual-mode force baseline.
+V10j — Switching Yard, text-list import, humanised library backup/restore labels, iOS long-press selection suppression, canonical README/spec.
+
+NEXT
+Test on actual iPhone Home app:
+- note-row long press still opens editor without blue wash
+- All iCloud long press opens Switching Yard
+- Switching Yard can reroute force to another list
+- Import RGB.txt from Files/iCloud adds list to Home app
+- existing keypad/force behavior remains unchanged

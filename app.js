@@ -29,7 +29,17 @@ const el = {
   keypadHotspot:document.getElementById('keypadHotspot'),
   keypad:document.getElementById('keypad'),
   keyCancel:document.getElementById('keyCancel'),
-  keyBack:document.getElementById('keyBack')
+  keyBack:document.getElementById('keyBack'),
+  allICloud:document.getElementById('allICloud'),
+  switchyardScreen:document.getElementById('switchyardScreen'),
+  yardCancel:document.getElementById('yardCancel'),
+  yardApply:document.getElementById('yardApply'),
+  yardForce:document.getElementById('yardForce'),
+  yardList:document.getElementById('yardList'),
+  yardMode:document.getElementById('yardMode'),
+  importTextList:document.getElementById('importTextList'),
+  yardExportLibrary:document.getElementById('yardExportLibrary'),
+  yardImportLibrary:document.getElementById('yardImportLibrary')
 };
 
 function defaults(){
@@ -85,7 +95,7 @@ function active(){
 }
 
 function show(screen){
-  [el.noteScreen,el.libraryScreen,el.editorScreen].forEach(x=>x.classList.add('hidden'));
+  [el.noteScreen,el.libraryScreen,el.editorScreen,el.switchyardScreen].forEach(x=>x.classList.add('hidden'));
   screen.classList.remove('hidden');
 }
 
@@ -127,9 +137,10 @@ function renderLibrary(){
     row.append(rt,rm);
     row.addEventListener('click',()=>openNote(item.id));
     let timer=null;
-    row.addEventListener('touchstart',()=>{timer=setTimeout(()=>openEditor(item.id),700)},{passive:true});
-    row.addEventListener('touchend',()=>clearTimeout(timer),{passive:true});
+    row.addEventListener('touchstart',e=>{e.preventDefault();timer=setTimeout(()=>openEditor(item.id),700)},{passive:false});
+    row.addEventListener('touchend',e=>{clearTimeout(timer); if(timer){ /* click follows normally on iOS */ }},{passive:true});
     row.addEventListener('touchcancel',()=>clearTimeout(timer),{passive:true});
+    row.addEventListener('contextmenu',e=>e.preventDefault());
     card.appendChild(row);
   });
   el.libraryScroller.append(section,card);
@@ -180,6 +191,115 @@ function deleteEditor(){
   if(activeId===editingId) activeId=library[0].id;
   persist();
   openLibrary();
+}
+
+function renderYardLists(){
+  el.yardList.replaceChildren();
+  library.forEach(item=>{
+    const opt=document.createElement('option');
+    opt.value=item.id;
+    opt.textContent=item.title;
+    el.yardList.appendChild(opt);
+  });
+  const chosen=library.find(x=>x.id===activeId) || library[0];
+  if(chosen) el.yardList.value=chosen.id;
+  updateYardMode();
+}
+
+function updateYardMode(){
+  const item=library.find(x=>x.id===el.yardList.value);
+  const force=String(el.yardForce.value||'').trim();
+  if(!item){el.yardMode.textContent='';return;}
+  if(!force){el.yardMode.textContent=`Destination: ${item.title}`;return;}
+  el.yardMode.textContent=item.items.includes(force)
+    ? 'Internal force: existing item will move to the chosen number.'
+    : 'External force: item at the chosen number will be replaced.';
+}
+
+function openSwitchyard(){
+  renderYardLists();
+  const item=library.find(x=>x.id===el.yardList.value) || library[0];
+  el.yardForce.value=item?.force||'';
+  updateYardMode();
+  show(el.switchyardScreen);
+  document.querySelector('.yardBody').scrollTop=0;
+}
+
+function applySwitchyard(){
+  const item=library.find(x=>x.id===el.yardList.value);
+  if(!item) return;
+  item.force=el.yardForce.value.trim();
+  item.updated=Date.now();
+  activeId=item.id;
+  currentItem=item;
+  persist();
+  openLibrary();
+}
+
+function parseTextList(text,filename='Imported List.txt'){
+  const lines=String(text||'').replace(/\r/g,'').split('\n');
+  let title='';
+  let force='';
+  let i=0;
+  for(;i<lines.length;i++){
+    const raw=lines[i];
+    const t=raw.trim();
+    if(!t){ if(title||force){i++;break;} continue; }
+    const mt=t.match(/^TITLE\s*:\s*(.*)$/i);
+    if(mt){title=mt[1].trim();continue;}
+    const mf=t.match(/^FORCE\s*:\s*(.*)$/i);
+    if(mf){force=mf[1].trim();continue;}
+    break;
+  }
+  const items=lines.slice(i).map(x=>x.trim()).filter(Boolean);
+  if(!title) title=String(filename||'Imported List').replace(/\.[^.]+$/,'').trim()||'Imported List';
+  if(!items.length) return null;
+  return {id:'list-'+Date.now()+'-'+Math.random().toString(36).slice(2),title,force,items,updated:Date.now()};
+}
+
+function importTextListFile(file){
+  if(!file) return;
+  const r=new FileReader();
+  r.onload=()=>{
+    const rec=parseTextList(r.result,file.name);
+    if(!rec) return;
+    library.push(rec);
+    activeId=rec.id;
+    currentItem=rec;
+    persist();
+    renderYardLists();
+    el.yardList.value=rec.id;
+    el.yardForce.value=rec.force;
+    updateYardMode();
+  };
+  r.readAsText(file);
+}
+
+function exportWholeLibrary(){
+  const blob=new Blob([JSON.stringify(library,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='Lists Backup '+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+
+function restoreWholeLibrary(file){
+  if(!file) return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const parsed=JSON.parse(r.result);
+    const cleaned=Array.isArray(parsed)?parsed.map(cleanRecord).filter(Boolean):[];
+    if(cleaned.length){
+      library=cleaned;
+      activeId=library[0].id;
+      currentItem=library[0];
+      persist();
+      openLibrary();
+    }
+  }catch(err){}};
+  r.readAsText(file);
 }
 
 function forcedList(item,n){
@@ -245,22 +365,23 @@ el.editorCancel.addEventListener('click',openLibrary);
 el.editorSave.addEventListener('click',saveEditor);
 el.deleteList.addEventListener('click',deleteEditor);
 
-el.exportLibrary.addEventListener('click',()=>{
-  const blob=new Blob([JSON.stringify(library,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download='number-list-library.json';a.click();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
+el.exportLibrary.addEventListener('click',exportWholeLibrary);
+el.importLibrary.addEventListener('change',e=>restoreWholeLibrary(e.target.files?.[0]));
+
+// V10j master controls at Fake Notes level.
+holdTo(el.allICloud,openSwitchyard,700);
+el.allICloud.addEventListener('contextmenu',e=>e.preventDefault());
+el.yardCancel.addEventListener('click',openLibrary);
+el.yardApply.addEventListener('click',applySwitchyard);
+el.yardList.addEventListener('change',()=>{
+  const item=library.find(x=>x.id===el.yardList.value);
+  el.yardForce.value=item?.force||'';
+  updateYardMode();
 });
-el.importLibrary.addEventListener('change',e=>{
-  const f=e.target.files?.[0];if(!f)return;
-  const r=new FileReader();
-  r.onload=()=>{try{
-    const parsed=JSON.parse(r.result);
-    const cleaned=Array.isArray(parsed)?parsed.map(cleanRecord).filter(Boolean):[];
-    if(cleaned.length){library=cleaned;activeId=library[0].id;persist();openLibrary()}
-  }catch(err){}};
-  r.readAsText(f);
-});
+el.yardForce.addEventListener('input',updateYardMode);
+el.importTextList.addEventListener('change',e=>importTextListFile(e.target.files?.[0]));
+el.yardExportLibrary.addEventListener('click',exportWholeLibrary);
+el.yardImportLibrary.addEventListener('change',e=>restoreWholeLibrary(e.target.files?.[0]));
 
 holdTo(el.keypadHotspot,openKeypad,450);
 holdTo(el.voiceHotspot,()=>{location.href='shortcuts://run-shortcut?name='+encodeURIComponent('Number List Voice')},450);
@@ -288,7 +409,7 @@ if(validNumber(supplied)){
 
 // Small public surface for automated headless testing and future diagnostics.
 window.NumberListApp={
-  openLibrary,openNote,openEditor,saveEditor,commitForce,
+  openLibrary,openNote,openEditor,saveEditor,commitForce,openSwitchyard,parseTextList,
   getLibrary:()=>JSON.parse(JSON.stringify(library)),
   active:()=>JSON.parse(JSON.stringify(active())),
   forceMode:()=>{

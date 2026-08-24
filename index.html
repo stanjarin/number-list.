@@ -10,10 +10,9 @@
 <title>Notes</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
-<link rel="stylesheet" href="styles.css?v=10i">
+<link rel="stylesheet" href="styles.css?v=10j">
 </head>
 <body>
-
 <section id="noteScreen" class="screen hidden">
   <header class="topbar">
     <button id="notesBack" class="notesBack" type="button">‹ <span>Notes</span></button>
@@ -25,10 +24,8 @@
     <ol id="noteList"></ol>
   </main>
   <footer class="noteFooter"><span>☷</span><span>⌁</span><span>✎</span></footer>
-
   <button id="voiceHotspot" class="hotspot voiceHotspot" aria-label="Voice"></button>
   <button id="keypadHotspot" class="hotspot keypadHotspot" aria-label="Manual"></button>
-
   <div id="keypad" class="keypad hidden">
     <div class="keys">
       <button data-digit="1">1</button><button data-digit="2">2</button><button data-digit="3">3</button>
@@ -43,7 +40,7 @@
   <div class="libraryHead">
     <div class="folders">‹ <span>Folders</span></div>
     <div class="more">•••</div>
-    <h2>All iCloud</h2>
+    <h2 id="allICloud">All iCloud</h2>
     <div class="search">⌕ <span>Search</span></div>
   </div>
   <div id="libraryScroller" class="libraryScroller"></div>
@@ -65,15 +62,47 @@
     <label>Items — one per line<textarea id="editItems" spellcheck="false"></textarea></label>
     <button id="deleteList" class="deleteButton" type="button">Delete List</button>
     <div class="backupRow">
-      <button id="exportLibrary" type="button">Export Library</button>
-      <label>Import Library<input id="importLibrary" type="file" accept=".json,application/json"></label>
+      <button id="exportLibrary" type="button">Back Up Library</button>
+      <label>Restore Library<input id="importLibrary" type="file" accept=".json,application/json"></label>
     </div>
-    <p class="storageNote">Stored on this iPhone. Export is the backup.</p>
+    <p class="storageNote">Stored on this iPhone.</p>
+  </main>
+</section>
+
+<section id="switchyardScreen" class="screen hidden">
+  <header class="editorHead">
+    <button id="yardCancel" type="button">Cancel</button>
+    <strong>Switching Yard</strong>
+    <button id="yardApply" type="button">Apply</button>
+  </header>
+  <main class="editorBody yardBody">
+    <label>Force word / item
+      <input id="yardForce" type="text" autocomplete="off" placeholder="e.g. Envy">
+    </label>
+    <label>Send to list
+      <select id="yardList"></select>
+    </label>
+    <p id="yardMode" class="storageNote"></p>
+
+    <div class="yardSection">
+      <strong>Add a list from a plain-text file</strong>
+      <label class="fileButton">Import List
+        <input id="importTextList" type="file" accept=".txt,text/plain">
+      </label>
+      <p class="storageNote">Optional first lines: TITLE: … and FORCE: …; remaining lines become the list.</p>
+    </div>
+
+    <div class="yardSection">
+      <strong>Whole-library safety copy</strong>
+      <div class="backupRow">
+        <button id="yardExportLibrary" type="button">Back Up Library</button>
+        <label>Restore Library<input id="yardImportLibrary" type="file" accept=".json,application/json"></label>
+      </div>
+    </div>
   </main>
 </section>
 
 <div id="selftestResult" class="hidden"></div>
-
-<script src="app.js?v=10i"></script>
+<script src="app.js?v=10j"></script>
 </body>
 </html>
